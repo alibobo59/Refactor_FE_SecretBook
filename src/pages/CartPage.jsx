@@ -3,9 +3,11 @@ import { Link } from 'react-router-dom';
 import { useCart } from '../contexts/CartContext';
 import { Minus, Plus, X, ShoppingBag, ArrowRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useLanguage } from '../contexts/LanguageContext';
 
 const CartPage = () => {
   const { cartItems, updateQuantity, removeFromCart, getCartTotal } = useCart();
+  const { t } = useLanguage();
 
   const handleQuantityChange = (bookId, newQuantity) => {
     if (newQuantity < 1) return;
@@ -14,7 +16,7 @@ const CartPage = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-serif font-bold text-gray-800 dark:text-white mb-8">Shopping Cart</h1>
+      <h1 className="text-3xl font-serif font-bold text-gray-800 dark:text-white mb-8">{t('cart.title')}</h1>
 
       {cartItems.length === 0 ? (
         <div className="text-center py-12">
@@ -22,16 +24,16 @@ const CartPage = () => {
             <ShoppingBag className="h-8 w-8 text-amber-600 dark:text-amber-500" />
           </div>
           <h2 className="text-xl font-medium text-gray-800 dark:text-white mb-4">
-            Your cart is empty
+            {t('cart.empty.title')}
           </h2>
           <p className="text-gray-600 dark:text-gray-400 mb-8">
-            Looks like you haven't added any books to your cart yet.
+            {t('cart.empty.message')}
           </p>
           <Link
             to="/books"
             className="inline-flex items-center px-6 py-3 bg-amber-600 text-white rounded-md hover:bg-amber-700 transition-colors"
           >
-            Browse Books
+            {t('nav.books')}
             <ArrowRight className="h-5 w-5 ml-2" />
           </Link>
         </div>
@@ -68,7 +70,7 @@ const CartPage = () => {
                           {item.title}
                         </Link>
                         <p className="text-gray-600 dark:text-gray-400">
-                          by {item.author}
+                          {t('book.by')} {item.author}
                         </p>
                       </div>
                       <button
@@ -118,25 +120,25 @@ const CartPage = () => {
               className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md sticky top-24"
             >
               <h2 className="text-xl font-medium text-gray-800 dark:text-white mb-6">
-                Order Summary
+                {t('cart.summary')}
               </h2>
 
               <div className="space-y-4">
                 <div className="flex justify-between text-gray-600 dark:text-gray-400">
-                  <span>Subtotal</span>
+                  <span>{t('cart.subtotal')}</span>
                   <span>${getCartTotal().toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between text-gray-600 dark:text-gray-400">
-                  <span>Shipping</span>
-                  <span>Free</span>
+                  <span>{t('cart.shipping')}</span>
+                  <span>{t('cart.free')}</span>
                 </div>
                 <div className="border-t border-gray-200 dark:border-gray-700 pt-4">
                   <div className="flex justify-between text-lg font-medium text-gray-800 dark:text-white">
-                    <span>Total</span>
+                    <span>{t('cart.total')}</span>
                     <span>${getCartTotal().toFixed(2)}</span>
                   </div>
                   <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                    Including VAT
+                    {t('cart.vat')}
                   </p>
                 </div>
               </div>
@@ -145,7 +147,7 @@ const CartPage = () => {
                 to="/checkout"
                 className="mt-6 w-full inline-flex items-center justify-center px-6 py-3 bg-amber-600 text-white rounded-md hover:bg-amber-700 transition-colors"
               >
-                Proceed to Checkout
+                {t('cart.checkout')}
                 <ArrowRight className="h-5 w-5 ml-2" />
               </Link>
             </motion.div>

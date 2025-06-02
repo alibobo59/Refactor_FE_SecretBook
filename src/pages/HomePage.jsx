@@ -4,10 +4,12 @@ import { useBook } from '../contexts/BookContext';
 import { motion } from 'framer-motion';
 import { Search, ChevronRight } from 'lucide-react';
 import BookCard from '../components/books/BookCard';
+import { useLanguage } from '../contexts/LanguageContext';
 
 const HomePage = () => {
   const { books, categories, loading } = useBook();
   const [searchQuery, setSearchQuery] = React.useState('');
+  const { t } = useLanguage();
 
   // Get featured books (top rated books)
   const featuredBooks = React.useMemo(() => {
@@ -68,15 +70,15 @@ const HomePage = () => {
             transition={{ duration: 0.6 }}
           >
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif font-bold mb-6">
-              Discover Your Next Favorite Book
+              {t('home.hero.title')}
             </h1>
             <p className="text-xl md:text-2xl mb-8 opacity-90">
-              Browse thousands of books, track your reading journey, and connect with fellow book lovers.
+              {t('home.hero.subtitle')}
             </p>
             <form onSubmit={handleSearch} className="max-w-xl mx-auto relative">
               <input
                 type="text"
-                placeholder="Search by title, author, or genre..."
+                placeholder={t('search.placeholder')}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full py-3 px-5 pl-12 rounded-full bg-white bg-opacity-20 backdrop-blur-sm text-white placeholder-white placeholder-opacity-75 border border-white border-opacity-30 focus:outline-none focus:ring-2 focus:ring-white focus:ring-opacity-50 focus:bg-opacity-30 transition-all duration-200"
@@ -98,13 +100,13 @@ const HomePage = () => {
         <div className="container mx-auto px-4">
           <div className="flex justify-between items-center mb-8">
             <h2 className="text-3xl font-serif font-bold text-gray-800 dark:text-white">
-              Featured Books
+              {t('home.featured')}
             </h2>
             <Link 
               to="/books" 
               className="text-amber-600 dark:text-amber-500 hover:text-amber-700 dark:hover:text-amber-400 font-medium flex items-center"
             >
-              View All
+              {t('common.viewAll')}
               <ChevronRight className="h-5 w-5 ml-1" />
             </Link>
           </div>
@@ -143,7 +145,7 @@ const HomePage = () => {
       <section className="py-16 bg-white dark:bg-gray-800">
         <div className="container mx-auto px-4">
           <h2 className="text-3xl font-serif font-bold text-gray-800 dark:text-white mb-8">
-            Browse by Category
+            {t('home.categories')}
           </h2>
           
           {loading ? (
@@ -186,13 +188,13 @@ const HomePage = () => {
         <div className="container mx-auto px-4">
           <div className="flex justify-between items-center mb-8">
             <h2 className="text-3xl font-serif font-bold text-gray-800 dark:text-white">
-              New Releases
+              {t('home.new')}
             </h2>
             <Link 
               to="/new-releases" 
               className="text-amber-600 dark:text-amber-500 hover:text-amber-700 dark:hover:text-amber-400 font-medium flex items-center"
             >
-              View All
+              {t('common.viewAll')}
               <ChevronRight className="h-5 w-5 ml-1" />
             </Link>
           </div>
@@ -238,16 +240,16 @@ const HomePage = () => {
             transition={{ duration: 0.6 }}
           >
             <h2 className="text-3xl font-serif font-bold mb-6">
-              Join Our Book-Loving Community
+              {t('home.community.title')}
             </h2>
             <p className="text-xl mb-8 opacity-90">
-              Track your reading, create custom bookshelves, share reviews, and connect with readers who share your interests.
+              {t('home.community.subtitle')}
             </p>
             <Link 
               to="/register" 
               className="inline-block px-8 py-3 bg-white text-teal-600 font-medium rounded-full hover:bg-opacity-90 transition-colors duration-200"
             >
-              Sign Up Now
+              {t('nav.register')}
             </Link>
           </motion.div>
         </div>

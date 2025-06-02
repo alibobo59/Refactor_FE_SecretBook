@@ -1,5 +1,5 @@
 import React from "react";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, useLocation } from "react-router-dom";
 
 import Header from "./components/layout/Header";
 import Footer from "./components/layout/Footer";
@@ -15,10 +15,13 @@ import AdminDashboard from "./pages/admin/Dashboard";
 import NotFoundPage from "./pages/NotFoundPage";
 
 function App() {
+  const location = useLocation();
+  const isAdminRoute = location.pathname.startsWith('/admin');
+
   return (
     <div className="flex flex-col min-h-screen bg-amber-50 dark:bg-gray-900 text-gray-800 dark:text-gray-200">
-      <Header />
-      <main className="flex-grow">
+      {!isAdminRoute && <Header />}
+      <main className={`flex-grow ${isAdminRoute ? 'p-0' : ''}`}>
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/books" element={<BrowseBooksPage />} />
@@ -32,7 +35,7 @@ function App() {
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </main>
-      <Footer />
+      {!isAdminRoute && <Footer />}
     </div>
   );
 }

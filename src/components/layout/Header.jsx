@@ -12,21 +12,27 @@ import {
 } from "lucide-react";
 import { useAuth } from "../../contexts/AuthContext";
 import { useCart } from "../../contexts/CartContext";
+import { useLanguage } from "../../contexts/LanguageContext";
+import LanguageSwitcher from "../common/LanguageSwitcher";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [darkMode, setDarkMode] = useState(() => {
     // Initialize darkMode state based on localStorage or system preference
-    if (typeof window !== 'undefined') {
-      return localStorage.theme === 'dark' || 
-        (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches);
+    if (typeof window !== "undefined") {
+      return (
+        localStorage.theme === "dark" ||
+        (!localStorage.theme &&
+          window.matchMedia("(prefers-color-scheme: dark)").matches)
+      );
     }
     return false;
   });
   const [searchQuery, setSearchQuery] = useState("");
   const { user, logout } = useAuth();
   const { cartItems } = useCart();
+  const { t } = useLanguage();
   const location = useLocation();
 
   useEffect(() => {
@@ -35,36 +41,36 @@ const Header = () => {
     };
 
     // Apply initial theme
-    document.documentElement.classList.toggle('dark', darkMode);
+    document.documentElement.classList.toggle("dark", darkMode);
 
     // Listen for system theme changes
-    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
     const handleThemeChange = (e) => {
-      if (!('theme' in localStorage)) {
+      if (!("theme" in localStorage)) {
         setDarkMode(e.matches);
-        document.documentElement.classList.toggle('dark', e.matches);
+        document.documentElement.classList.toggle("dark", e.matches);
       }
     };
 
     window.addEventListener("scroll", handleScroll);
-    mediaQuery.addEventListener('change', handleThemeChange);
+    mediaQuery.addEventListener("change", handleThemeChange);
 
     return () => {
       window.removeEventListener("scroll", handleScroll);
-      mediaQuery.removeEventListener('change', handleThemeChange);
+      mediaQuery.removeEventListener("change", handleThemeChange);
     };
   }, [darkMode]);
 
   const toggleDarkMode = () => {
     const newDarkMode = !darkMode;
     setDarkMode(newDarkMode);
-    
+
     if (newDarkMode) {
-      localStorage.theme = 'dark';
-      document.documentElement.classList.add('dark');
+      localStorage.theme = "dark";
+      document.documentElement.classList.add("dark");
     } else {
-      localStorage.theme = 'light';
-      document.documentElement.classList.remove('dark');
+      localStorage.theme = "light";
+      document.documentElement.classList.remove("dark");
     }
   };
 
@@ -91,7 +97,7 @@ const Header = () => {
           <Link to="/" className="flex items-center group">
             <BookOpen className="h-8 w-8 text-amber-600 dark:text-amber-500 transition-transform group-hover:rotate-6 duration-300" />
             <span className="ml-2 text-2xl font-serif font-bold text-gray-800 dark:text-white">
-              Bookify
+              {t("app.name")}
             </span>
           </Link>
 
@@ -105,7 +111,7 @@ const Header = () => {
                   ? "text-amber-600 dark:text-amber-500"
                   : "text-gray-700 dark:text-gray-300"
               }`}>
-              Browse
+              {t("nav.books")}
             </Link>
             <Link
               to="/categories"
@@ -114,7 +120,7 @@ const Header = () => {
                   ? "text-amber-600 dark:text-amber-500"
                   : "text-gray-700 dark:text-gray-300"
               }`}>
-              Categories
+              {t("nav.categories")}
             </Link>
             <Link
               to="/recommendations"
@@ -123,7 +129,7 @@ const Header = () => {
                   ? "text-amber-600 dark:text-amber-500"
                   : "text-gray-700 dark:text-gray-300"
               }`}>
-              Recommendations
+              {t("home.bestsellers")}
             </Link>
           </nav>
 
@@ -132,7 +138,7 @@ const Header = () => {
             <form onSubmit={handleSearch} className="relative">
               <input
                 type="text"
-                placeholder="Search books..."
+                placeholder={t("nav.search") + "..."}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="py-2 pl-10 pr-4 rounded-full bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-amber-500 transition-all duration-200 w-40 focus:w-60"
@@ -140,10 +146,15 @@ const Header = () => {
               <Search className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
             </form>
 
+            {/* Language Switcher */}
+            <LanguageSwitcher />
+
             <button
               onClick={toggleDarkMode}
               className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-amber-500"
-              aria-label={darkMode ? "Switch to light mode" : "Switch to dark mode"}>
+              aria-label={
+                darkMode ? "Switch to light mode" : "Switch to dark mode"
+              }>
               {darkMode ? (
                 <Sun className="h-5 w-5 text-amber-500" />
               ) : (
@@ -205,7 +216,7 @@ const Header = () => {
               <Link
                 to="/login"
                 className="px-4 py-2 rounded-md bg-amber-600 text-white hover:bg-amber-700 transition-colors duration-200">
-                Login
+                {t("nav.login")}
               </Link>
             )}
           </div>
@@ -229,7 +240,7 @@ const Header = () => {
               <div className="relative">
                 <input
                   type="text"
-                  placeholder="Search books..."
+                  placeholder={t("nav.search") + "..."}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="w-full py-2 pl-10 pr-4 rounded-full bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-amber-500"
@@ -237,6 +248,11 @@ const Header = () => {
                 <Search className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
               </div>
             </form>
+
+            {/* Mobile Language Switcher */}
+            <div className="mb-4">
+              <LanguageSwitcher />
+            </div>
             <nav className="flex flex-col space-y-4">
               <Link
                 to="/books"
@@ -247,7 +263,7 @@ const Header = () => {
                     : "text-gray-700 dark:text-gray-300"
                 }`}
                 onClick={() => setIsMenuOpen(false)}>
-                Browse
+                {t("nav.books")}
               </Link>
               <Link
                 to="/categories"
@@ -257,7 +273,7 @@ const Header = () => {
                     : "text-gray-700 dark:text-gray-300"
                 }`}
                 onClick={() => setIsMenuOpen(false)}>
-                Categories
+                {t("nav.categories")}
               </Link>
               <Link
                 to="/recommendations"
@@ -267,7 +283,7 @@ const Header = () => {
                     : "text-gray-700 dark:text-gray-300"
                 }`}
                 onClick={() => setIsMenuOpen(false)}>
-                Recommendations
+                {t("home.bestsellers")}
               </Link>
 
               <div className="flex justify-between items-center pt-2 border-t border-gray-200 dark:border-gray-700">
@@ -277,7 +293,8 @@ const Header = () => {
                   onClick={() => setIsMenuOpen(false)}>
                   <ShoppingCart className="h-5 w-5" />
                   <span>
-                    Cart{cartItems?.length > 0 ? ` (${cartItems.length})` : ""}
+                    {t("nav.cart")}
+                    {cartItems?.length > 0 ? ` (${cartItems.length})` : ""}
                   </span>
                 </Link>
                 <button
@@ -286,7 +303,9 @@ const Header = () => {
                     setIsMenuOpen(false);
                   }}
                   className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors duration-200"
-                  aria-label={darkMode ? "Switch to light mode" : "Switch to dark mode"}>
+                  aria-label={
+                    darkMode ? "Switch to light mode" : "Switch to dark mode"
+                  }>
                   {darkMode ? (
                     <Sun className="h-5 w-5 text-amber-500" />
                   ) : (
@@ -301,7 +320,9 @@ const Header = () => {
                     <div className="w-8 h-8 rounded-full bg-teal-500 flex items-center justify-center text-white font-medium uppercase">
                       {user.name.charAt(0)}
                     </div>
-                    <span className="font-medium text-gray-800 dark:text-white">{user.name}</span>
+                    <span className="font-medium text-gray-800 dark:text-white">
+                      {user.name}
+                    </span>
                   </div>
                   <div className="flex flex-col space-y-3">
                     <Link
@@ -346,13 +367,13 @@ const Header = () => {
                     to="/login"
                     className="block w-full px-4 py-2 text-center rounded-md bg-amber-600 text-white hover:bg-amber-700 transition-colors duration-200"
                     onClick={() => setIsMenuOpen(false)}>
-                    Login
+                    {t("nav.login")}
                   </Link>
                   <Link
                     to="/register"
                     className="block w-full mt-2 px-4 py-2 text-center rounded-md border border-amber-600 text-amber-600 dark:text-amber-500 hover:bg-amber-50 dark:hover:bg-gray-800 transition-colors duration-200"
                     onClick={() => setIsMenuOpen(false)}>
-                    Register
+                    {t("nav.register")}
                   </Link>
                 </div>
               )}
