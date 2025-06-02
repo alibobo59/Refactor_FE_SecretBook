@@ -16,7 +16,14 @@ import { useCart } from "../../contexts/CartContext";
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
-  const [darkMode, setDarkMode] = useState(false);
+  const [darkMode, setDarkMode] = useState(() => {
+    // Initialize darkMode state based on localStorage or system preference
+    if (typeof window !== 'undefined') {
+      return localStorage.theme === 'dark' || 
+        (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches);
+    }
+    return false;
+  });
   const [searchQuery, setSearchQuery] = useState("");
   const { user, logout } = useAuth();
   const { cartItems } = useCart();
@@ -27,27 +34,31 @@ const Header = () => {
       setIsScrolled(window.scrollY > 10);
     };
 
-    const checkDarkMode = () => {
-      const isDark = localStorage.theme === 'dark' || 
-        (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches);
-      
-      setDarkMode(isDark);
-      document.documentElement.classList.toggle('dark', isDark);
+    // Apply initial theme
+    document.documentElement.classList.toggle('dark', darkMode);
+
+    // Listen for system theme changes
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    const handleThemeChange = (e) => {
+      if (!('theme' in localStorage)) {
+        setDarkMode(e.matches);
+        document.documentElement.classList.toggle('dark', e.matches);
+      }
     };
 
     window.addEventListener("scroll", handleScroll);
-    checkDarkMode();
+    mediaQuery.addEventListener('change', handleThemeChange);
 
     return () => {
       window.removeEventListener("scroll", handleScroll);
+      mediaQuery.removeEventListener('change', handleThemeChange);
     };
-  }, []);
+  }, [darkMode]);
 
   const toggleDarkMode = () => {
     const newDarkMode = !darkMode;
     setDarkMode(newDarkMode);
     
-    // Update localStorage and document class
     if (newDarkMode) {
       localStorage.theme = 'dark';
       document.documentElement.classList.add('dark');
