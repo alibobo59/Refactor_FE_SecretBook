@@ -28,17 +28,11 @@ const Header = () => {
     };
 
     const checkDarkMode = () => {
-      if (
-        localStorage.theme === "dark" ||
-        (!("theme" in localStorage) &&
-          window.matchMedia("(prefers-color-scheme: dark)").matches)
-      ) {
-        document.documentElement.classList.add("dark");
-        setDarkMode(true);
-      } else {
-        document.documentElement.classList.remove("dark");
-        setDarkMode(false);
-      }
+      const isDark = localStorage.theme === 'dark' || 
+        (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches);
+      
+      setDarkMode(isDark);
+      document.documentElement.classList.toggle('dark', isDark);
     };
 
     window.addEventListener("scroll", handleScroll);
@@ -50,14 +44,16 @@ const Header = () => {
   }, []);
 
   const toggleDarkMode = () => {
-    if (darkMode) {
-      document.documentElement.classList.remove("dark");
-      localStorage.theme = "light";
-      setDarkMode(false);
+    const newDarkMode = !darkMode;
+    setDarkMode(newDarkMode);
+    
+    // Update localStorage and document class
+    if (newDarkMode) {
+      localStorage.theme = 'dark';
+      document.documentElement.classList.add('dark');
     } else {
-      document.documentElement.classList.add("dark");
-      localStorage.theme = "dark";
-      setDarkMode(true);
+      localStorage.theme = 'light';
+      document.documentElement.classList.remove('dark');
     }
   };
 
@@ -84,7 +80,7 @@ const Header = () => {
           <Link to="/" className="flex items-center group">
             <BookOpen className="h-8 w-8 text-amber-600 dark:text-amber-500 transition-transform group-hover:rotate-6 duration-300" />
             <span className="ml-2 text-2xl font-serif font-bold text-gray-800 dark:text-white">
-              Secret
+              Bookify
             </span>
           </Link>
 
@@ -135,8 +131,8 @@ const Header = () => {
 
             <button
               onClick={toggleDarkMode}
-              className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors duration-200"
-              aria-label="Toggle dark mode">
+              className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-amber-500"
+              aria-label={darkMode ? "Switch to light mode" : "Switch to dark mode"}>
               {darkMode ? (
                 <Sun className="h-5 w-5 text-amber-500" />
               ) : (
@@ -274,9 +270,12 @@ const Header = () => {
                   </span>
                 </Link>
                 <button
-                  onClick={toggleDarkMode}
+                  onClick={() => {
+                    toggleDarkMode();
+                    setIsMenuOpen(false);
+                  }}
                   className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors duration-200"
-                  aria-label="Toggle dark mode">
+                  aria-label={darkMode ? "Switch to light mode" : "Switch to dark mode"}>
                   {darkMode ? (
                     <Sun className="h-5 w-5 text-amber-500" />
                   ) : (
@@ -291,7 +290,7 @@ const Header = () => {
                     <div className="w-8 h-8 rounded-full bg-teal-500 flex items-center justify-center text-white font-medium uppercase">
                       {user.name.charAt(0)}
                     </div>
-                    <span className="font-medium">{user.name}</span>
+                    <span className="font-medium text-gray-800 dark:text-white">{user.name}</span>
                   </div>
                   <div className="flex flex-col space-y-3">
                     <Link
