@@ -13,17 +13,19 @@ import {
   X,
   ChevronLeft,
   ChevronRight,
+  Building2,
+  UserSquare2,
 } from "lucide-react";
 
-// Import refactored components
 import BookManagement from "./BookManagement";
 import CategoryManagement from "./CategoryManagement";
 import UserManagement from "./UserManagement";
 import OrderManagement from "./OrderManagement";
 import DashboardHome from "./DashboardHome";
+import AuthorManagement from "./AuthorManagement";
+import PublisherManagement from "./PublisherManagement";
 import AdminHeader from "../../components/admin/AdminHeader";
 
-// Admin Dashboard Component
 const AdminDashboard = () => {
   const { user, logout } = useAuth();
   const { books, categories } = useBook();
@@ -32,7 +34,6 @@ const AdminDashboard = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 
-  // Check if user is admin
   useEffect(() => {
     if (!user || !user.isAdmin) {
       navigate("/login");
@@ -56,6 +57,8 @@ const AdminDashboard = () => {
     },
     { id: "books", label: "Books", icon: <BookOpen size={20} /> },
     { id: "categories", label: "Categories", icon: <Tag size={20} /> },
+    { id: "authors", label: "Authors", icon: <UserSquare2 size={20} /> },
+    { id: "publishers", label: "Publishers", icon: <Building2 size={20} /> },
     { id: "users", label: "Users", icon: <Users size={20} /> },
     { id: "orders", label: "Orders", icon: <ShoppingCart size={20} /> },
   ];
@@ -154,6 +157,8 @@ const AdminDashboard = () => {
             <BookManagement books={books} categories={categories} />
           )}
           {activeTab === "categories" && <CategoryManagement />}
+          {activeTab === "authors" && <AuthorManagement />}
+          {activeTab === "publishers" && <PublisherManagement />}
           {activeTab === "users" && <UserManagement />}
           {activeTab === "orders" && <OrderManagement />}
         </main>
