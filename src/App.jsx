@@ -9,6 +9,7 @@ import BrowseBooksPage from "./pages/BrowseBooksPage";
 import CartPage from "./pages/CartPage";
 import CheckoutPage from "./pages/CheckoutPage";
 import ProfilePage from "./pages/ProfilePage";
+import ReviewerProfilePage from "./pages/ReviewerProfilePage";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import AdminDashboard from "./pages/admin/Dashboard";
@@ -29,6 +30,7 @@ function App() {
           <Route path="/cart" element={<CartPage />} />
           <Route path="/checkout" element={<CheckoutPage />} />
           <Route path="/profile/:username" element={<ProfilePage />} />
+          <Route path="/reviewer/:reviewerId" element={<ReviewerProfilePage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/admin/*" element={<AdminDashboard />} />

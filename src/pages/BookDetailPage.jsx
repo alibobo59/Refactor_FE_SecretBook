@@ -10,6 +10,8 @@ import {
   Book,
   Hash,
   ArrowLeft,
+  User,
+  TrendingUp,
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { useLanguage } from "../contexts/LanguageContext";
@@ -298,28 +300,63 @@ const BookDetailPage = () => {
                 transition={{ duration: 0.5, delay: index * 0.1 }}
                 className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-md">
                 <div className="flex justify-between items-start mb-4">
-                  <div>
-                    <p className="font-medium text-gray-800 dark:text-white">
-                      {rating.user_name}
-                    </p>
-                    <div className="flex text-amber-500 mt-1">
-                      {[...Array(5)].map((_, index) => (
-                        <Star
-                          key={index}
-                          className={`h-4 w-4 ${
-                            index < rating.rating ? "fill-current" : ""
-                          }`}
-                        />
-                      ))}
+                  <div className="flex items-center gap-3">
+                    {/* Reviewer Avatar */}
+                    <Link
+                      to={`/reviewer/${rating.user_id}`}
+                      className="w-10 h-10 rounded-full bg-gradient-to-r from-amber-500 to-amber-600 flex items-center justify-center text-white font-medium hover:opacity-80 transition-opacity">
+                      {rating.user_name.charAt(0)}
+                    </Link>
+                    
+                    <div>
+                      <Link
+                        to={`/reviewer/${rating.user_id}`}
+                        className="font-medium text-gray-800 dark:text-white hover:text-amber-600 dark:hover:text-amber-500 transition-colors">
+                        {rating.user_name}
+                      </Link>
+                      <div className="flex items-center gap-2 mt-1">
+                        <div className="flex text-amber-500">
+                          {[...Array(5)].map((_, index) => (
+                            <Star
+                              key={index}
+                              className={`h-4 w-4 ${
+                                index < rating.rating ? "fill-current" : ""
+                              }`}
+                            />
+                          ))}
+                        </div>
+                        <span className="text-sm text-gray-500 dark:text-gray-400">
+                          {rating.rating}/5
+                        </span>
+                      </div>
                     </div>
                   </div>
-                  <span className="text-sm text-gray-500 dark:text-gray-400">
-                    {new Date(rating.created_at).toLocaleDateString()}
-                  </span>
+                  
+                  <div className="text-right">
+                    <span className="text-sm text-gray-500 dark:text-gray-400">
+                      {new Date(rating.created_at).toLocaleDateString()}
+                    </span>
+                    {/* Mock helpful votes */}
+                    <div className="flex items-center gap-1 text-xs text-gray-400 mt-1">
+                      <TrendingUp className="h-3 w-3" />
+                      <span>{Math.floor(Math.random() * 20) + 1} helpful</span>
+                    </div>
+                  </div>
                 </div>
-                <p className="text-gray-700 dark:text-gray-300">
+                
+                <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
                   {rating.review}
                 </p>
+                
+                {/* View Reviewer Profile Link */}
+                <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+                  <Link
+                    to={`/reviewer/${rating.user_id}`}
+                    className="inline-flex items-center gap-2 text-sm text-amber-600 dark:text-amber-500 hover:text-amber-700 dark:hover:text-amber-400 transition-colors">
+                    <User className="h-4 w-4" />
+                    View {rating.user_name}'s profile and reviews
+                  </Link>
+                </div>
               </motion.div>
             ))
           ) : (
