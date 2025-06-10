@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { useLanguage } from "../contexts/LanguageContext";
+import ReviewInteractionButtons from "../components/reviews/ReviewInteractionButtons";
 
 const BookDetailPage = () => {
   const { id } = useParams();
@@ -336,25 +337,27 @@ const BookDetailPage = () => {
                     <span className="text-sm text-gray-500 dark:text-gray-400">
                       {new Date(rating.created_at).toLocaleDateString()}
                     </span>
-                    {/* Mock helpful votes */}
-                    <div className="flex items-center gap-1 text-xs text-gray-400 mt-1">
-                      <TrendingUp className="h-3 w-3" />
-                      <span>{Math.floor(Math.random() * 20) + 1} helpful</span>
-                    </div>
                   </div>
                 </div>
                 
-                <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
+                <p className="text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
                   {rating.review}
                 </p>
                 
-                {/* View Reviewer Profile Link */}
-                <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+                {/* Like/Dislike Buttons */}
+                <div className="flex items-center justify-between">
+                  <ReviewInteractionButtons
+                    reviewId={rating.id}
+                    initialLikes={Math.floor(Math.random() * 20) + 5} // Mock initial likes
+                    initialDislikes={Math.floor(Math.random() * 5) + 1} // Mock initial dislikes
+                  />
+                  
+                  {/* View Reviewer Profile Link */}
                   <Link
                     to={`/reviewer/${rating.user_id}`}
                     className="inline-flex items-center gap-2 text-sm text-amber-600 dark:text-amber-500 hover:text-amber-700 dark:hover:text-amber-400 transition-colors">
                     <User className="h-4 w-4" />
-                    View {rating.user_name}'s profile and reviews
+                    View {rating.user_name}'s profile
                   </Link>
                 </div>
               </motion.div>

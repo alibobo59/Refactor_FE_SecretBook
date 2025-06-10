@@ -3,6 +3,7 @@ import "./index.css";
 import { BookProvider } from "./contexts/BookContext";
 import { AuthProvider } from "./contexts/AuthContext";
 import { CartProvider } from "./contexts/CartContext";
+import { ReviewProvider } from "./contexts/ReviewContext";
 import LanguageProvider from "./contexts/LanguageContext";
 import ReactDOM from "react-dom/client";
 import React from "react";
@@ -16,7 +17,9 @@ root.render(
         <AuthProvider>
           <BookProvider>
             <CartProvider>
-              <App />
+              <ReviewProvider>
+                <App />
+              </ReviewProvider>
             </CartProvider>
           </BookProvider>
         </AuthProvider>

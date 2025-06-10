@@ -11,6 +11,7 @@ import {
   TrendingUp,
 } from "lucide-react";
 import { useLanguage } from "../contexts/LanguageContext";
+import ReviewInteractionButtons from "../components/reviews/ReviewInteractionButtons";
 
 const ReviewerProfilePage = () => {
   const { reviewerId } = useParams();
@@ -43,7 +44,7 @@ const ReviewerProfilePage = () => {
         ],
       };
 
-      // Mock reviews data
+      // Mock reviews data with like/dislike counts
       const mockReviews = [
         {
           id: 1,
@@ -56,6 +57,8 @@ const ReviewerProfilePage = () => {
           date: "2023-07-15",
           helpfulVotes: 23,
           verified: true,
+          likes: 28,
+          dislikes: 3,
         },
         {
           id: 2,
@@ -68,6 +71,8 @@ const ReviewerProfilePage = () => {
           date: "2023-07-10",
           helpfulVotes: 31,
           verified: true,
+          likes: 35,
+          dislikes: 2,
         },
         {
           id: 3,
@@ -80,6 +85,8 @@ const ReviewerProfilePage = () => {
           date: "2023-07-05",
           helpfulVotes: 18,
           verified: false,
+          likes: 22,
+          dislikes: 5,
         },
         {
           id: 4,
@@ -92,6 +99,8 @@ const ReviewerProfilePage = () => {
           date: "2023-06-28",
           helpfulVotes: 15,
           verified: true,
+          likes: 19,
+          dislikes: 2,
         },
         {
           id: 5,
@@ -104,6 +113,8 @@ const ReviewerProfilePage = () => {
           date: "2023-06-20",
           helpfulVotes: 27,
           verified: true,
+          likes: 31,
+          dislikes: 1,
         },
       ];
 
@@ -368,11 +379,12 @@ const ReviewerProfilePage = () => {
                       {review.review}
                     </p>
 
-                    {/* Helpful Votes */}
-                    <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
-                      <TrendingUp className="h-4 w-4" />
-                      <span>{review.helpfulVotes} people found this helpful</span>
-                    </div>
+                    {/* Like/Dislike Buttons */}
+                    <ReviewInteractionButtons
+                      reviewId={review.id}
+                      initialLikes={review.likes}
+                      initialDislikes={review.dislikes}
+                    />
                   </div>
                 </div>
               </motion.div>
