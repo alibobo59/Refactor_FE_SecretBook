@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
+import { useOrder } from "../contexts/OrderContext";
 import { useLanguage } from "../contexts/LanguageContext";
 import { motion } from "framer-motion";
 import {
@@ -21,11 +22,16 @@ import {
   Star,
   Eye,
   Trash2,
+  Truck,
+  CheckCircle,
+  Clock,
+  XCircle,
 } from "lucide-react";
 
 const ProfilePage = () => {
   const { username } = useParams();
   const { user } = useAuth();
+  const { getUserOrders } = useOrder();
   const { t } = useLanguage();
   const [activeTab, setActiveTab] = useState("profile");
   const [isEditing, setIsEditing] = useState(false);
@@ -38,50 +44,10 @@ const ProfilePage = () => {
     joinDate: "2023-01-15",
   });
 
-  // Mock data for orders and wishlist
-  const [orders] = useState([
-    {
-      id: "ORD-001",
-      date: "2023-07-15",
-      status: "Delivered",
-      total: 45.99,
-      items: [
-        {
-          id: 1,
-          title: "The Great Gatsby",
-          author: "F. Scott Fitzgerald",
-          price: 12.99,
-          quantity: 1,
-          image: "https://images.pexels.com/photos/4170629/pexels-photo-4170629.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
-        },
-        {
-          id: 2,
-          title: "To Kill a Mockingbird",
-          author: "Harper Lee",
-          price: 14.99,
-          quantity: 1,
-          image: "https://images.pexels.com/photos/7034646/pexels-photo-7034646.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
-        },
-      ],
-    },
-    {
-      id: "ORD-002",
-      date: "2023-07-10",
-      status: "Processing",
-      total: 29.99,
-      items: [
-        {
-          id: 3,
-          title: "1984",
-          author: "George Orwell",
-          price: 13.99,
-          quantity: 1,
-          image: "https://images.pexels.com/photos/4170629/pexels-photo-4170629.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
-        },
-      ],
-    },
-  ]);
+  // Get user's orders
+  const userOrders = user ? getUserOrders(user.id) : [];
 
+  // Mock data for wishlist
   const [wishlist, setWishlist] = useState([
     {
       id: 4,
@@ -124,16 +90,38 @@ const ProfilePage = () => {
 
   const getStatusColor = (status) => {
     switch (status) {
-      case "Delivered":
-        return "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200";
-      case "Processing":
+      case "pending":
+        return "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200";
+      case "confirmed":
         return "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200";
-      case "Shipped":
+      case "processing":
+        return "bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200";
+      case "shipped":
         return "bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-200";
-      case "Cancelled":
+      case "delivered":
+        return "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200";
+      case "cancelled":
         return "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200";
       default:
         return "bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300";
+    }
+  };
+
+  const getStatusIcon = (status) => {
+    switch (status) {
+      case "pending":
+        return <Clock className="h-4 w-4" />;
+      case "confirmed":
+      case "processing":
+        return <Package className="h-4 w-4" />;
+      case "shipped":
+        return <Truck className="h-4 w-4" />;
+      case "delivered":
+        return <CheckCircle className="h-4 w-4" />;
+      case "cancelled":
+        return <XCircle className="h-4 w-4" />;
+      default:
+        return <Package className="h-4 w-4" />;
     }
   };
 
@@ -171,7 +159,7 @@ const ProfilePage = () => {
                 </div>
                 <div className="flex items-center gap-1">
                   <Package className="h-4 w-4" />
-                  {orders.length} Orders
+                  {userOrders.length} Orders
                 </div>
                 <div className="flex items-center gap-1">
                   <Heart className="h-4 w-4" />
@@ -356,14 +344,19 @@ const ProfilePage = () => {
                   Order History
                 </h2>
                 
-                {orders.length === 0 ? (
+                {userOrders.length === 0 ? (
                   <div className="text-center py-12">
                     <Package className="h-12 w-12 text-gray-400 mx-auto mb-4" />
                     <p className="text-gray-500 dark:text-gray-400">No orders yet</p>
+                    <Link
+                      to="/books"
+                      className="inline-block mt-4 px-6 py-2 bg-amber-600 text-white rounded-md hover:bg-amber-700 transition-colors">
+                      Start Shopping
+                    </Link>
                   </div>
                 ) : (
                   <div className="space-y-4">
-                    {orders.map((order) => (
+                    {userOrders.map((order) => (
                       <div
                         key={order.id}
                         className="border border-gray-200 dark:border-gray-700 rounded-lg p-6"
@@ -374,12 +367,13 @@ const ProfilePage = () => {
                               Order {order.id}
                             </h3>
                             <p className="text-sm text-gray-500 dark:text-gray-400">
-                              {new Date(order.date).toLocaleDateString()}
+                              {new Date(order.createdAt).toLocaleDateString()}
                             </p>
                           </div>
                           <div className="text-right">
-                            <span className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(order.status)}`}>
-                              {order.status}
+                            <span className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(order.status)}`}>
+                              {getStatusIcon(order.status)}
+                              {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
                             </span>
                             <p className="text-lg font-semibold text-gray-800 dark:text-white mt-1">
                               ${order.total.toFixed(2)}
@@ -388,10 +382,10 @@ const ProfilePage = () => {
                         </div>
                         
                         <div className="space-y-3">
-                          {order.items.map((item) => (
-                            <div key={item.id} className="flex items-center gap-4">
+                          {order.items?.map((item) => (
+                            <div key={item.bookId} className="flex items-center gap-4">
                               <img
-                                src={item.image}
+                                src={item.coverImage}
                                 alt={item.title}
                                 className="w-12 h-16 object-cover rounded"
                               />
@@ -405,7 +399,7 @@ const ProfilePage = () => {
                               </div>
                               <div className="text-right">
                                 <p className="font-medium text-gray-800 dark:text-white">
-                                  ${item.price.toFixed(2)}
+                                  ${(item.price * item.quantity).toFixed(2)}
                                 </p>
                                 <p className="text-sm text-gray-500 dark:text-gray-400">
                                   Qty: {item.quantity}
@@ -417,7 +411,7 @@ const ProfilePage = () => {
                         
                         <div className="flex justify-end mt-4">
                           <Link
-                            to={`/orders/${order.id}`}
+                            to={`/order-confirmation/${order.id}`}
                             className="flex items-center gap-2 text-amber-600 dark:text-amber-500 hover:text-amber-700 dark:hover:text-amber-400"
                           >
                             <Eye className="h-4 w-4" />

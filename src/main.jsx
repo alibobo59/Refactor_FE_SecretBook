@@ -4,6 +4,7 @@ import { BookProvider } from "./contexts/BookContext";
 import { AuthProvider } from "./contexts/AuthContext";
 import { CartProvider } from "./contexts/CartContext";
 import { ReviewProvider } from "./contexts/ReviewContext";
+import { OrderProvider } from "./contexts/OrderContext";
 import LanguageProvider from "./contexts/LanguageContext";
 import ReactDOM from "react-dom/client";
 import React from "react";
@@ -17,9 +18,11 @@ root.render(
         <AuthProvider>
           <BookProvider>
             <CartProvider>
-              <ReviewProvider>
-                <App />
-              </ReviewProvider>
+              <OrderProvider>
+                <ReviewProvider>
+                  <App />
+                </ReviewProvider>
+              </OrderProvider>
             </CartProvider>
           </BookProvider>
         </AuthProvider>
