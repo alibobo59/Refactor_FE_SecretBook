@@ -1,11 +1,14 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { BookOpen, Tag, AlertCircle, DollarSign } from "lucide-react";
 import { StatCard, Table } from "../../components/admin";
+import { useNotification } from "../../contexts/NotificationContext";
 
 /**
  * Dashboard home component showing statistics and low stock books
  */
 const DashboardHome = ({ books, categories }) => {
+  const { notifyLowStock } = useNotification();
+
   // Calculate statistics
   const totalBooks = books.length;
   const totalCategories = categories.length;
@@ -14,6 +17,24 @@ const DashboardHome = ({ books, categories }) => {
     (sum, book) => sum + book.price * book.stock,
     0
   );
+
+  // Check for low stock and send notifications
+  useEffect(() => {
+    const lowStockItems = books.filter((book) => book.stock < 5 && book.stock > 0);
+    
+    // Send notifications for critically low stock items (less than 5)
+    lowStockItems.forEach((book) => {
+      // Check if we've already notified about this book recently
+      const lastNotified = localStorage.getItem(`lowStock_${book.id}`);
+      const now = Date.now();
+      const oneDay = 24 * 60 * 60 * 1000;
+      
+      if (!lastNotified || (now - parseInt(lastNotified)) > oneDay) {
+        notifyLowStock(book.title, book.stock);
+        localStorage.setItem(`lowStock_${book.id}`, now.toString());
+      }
+    });
+  }, [books, notifyLowStock]);
 
   // Define columns for the low stock books table
   const columns = [
@@ -86,7 +107,11 @@ const DashboardHome = ({ books, categories }) => {
                 {book.author}
               </td>
               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
-                <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200">
+                <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                  book.stock < 5 
+                    ? "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200"
+                    : "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200"
+                }`}>
                   {book.stock}
                 </span>
               </td>

@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useAuth } from './AuthContext';
 import { useCart } from './CartContext';
+import { useNotification } from './NotificationContext';
 
 const OrderContext = createContext();
 
@@ -11,6 +12,7 @@ export const useOrder = () => {
 export const OrderProvider = ({ children }) => {
   const { user } = useAuth();
   const { clearCart } = useCart();
+  const { notifyOrderPlaced, notifyOrderConfirmed, notifyOrderShipped, notifyOrderDelivered, notifyNewOrder } = useNotification();
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -67,6 +69,15 @@ export const OrderProvider = ({ children }) => {
       // Clear the cart after successful order creation
       clearCart();
       
+      // Send notifications
+      notifyOrderPlaced(newOrder.id);
+      
+      // Notify admin about new order (simulate admin notification)
+      if (user.isAdmin !== true) {
+        // In a real app, this would be sent to all admin users
+        notifyNewOrder(newOrder.id, newOrder.customerName);
+      }
+      
       return newOrder;
     } catch (error) {
       setError('Failed to create order');
@@ -85,17 +96,33 @@ export const OrderProvider = ({ children }) => {
       await new Promise(resolve => setTimeout(resolve, 500));
 
       setOrders(prevOrders => 
-        prevOrders.map(order => 
-          order.id === orderId 
-            ? { 
-                ...order, 
-                status: newStatus, 
-                updatedAt: new Date().toISOString(),
-                // Update payment status if order is confirmed
-                paymentStatus: newStatus === 'confirmed' ? 'pending' : order.paymentStatus
-              }
-            : order
-        )
+        prevOrders.map(order => {
+          if (order.id === orderId) {
+            const updatedOrder = { 
+              ...order, 
+              status: newStatus, 
+              updatedAt: new Date().toISOString(),
+              // Update payment status if order is confirmed
+              paymentStatus: newStatus === 'confirmed' ? 'pending' : order.paymentStatus
+            };
+
+            // Send status update notifications to customer
+            switch (newStatus) {
+              case 'confirmed':
+                notifyOrderConfirmed(orderId);
+                break;
+              case 'shipped':
+                notifyOrderShipped(orderId);
+                break;
+              case 'delivered':
+                notifyOrderDelivered(orderId);
+                break;
+            }
+
+            return updatedOrder;
+          }
+          return order;
+        })
       );
 
       return true;
