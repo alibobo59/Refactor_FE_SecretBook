@@ -11,8 +11,7 @@ import {
 import { useAuth } from "../../contexts/AuthContext";
 import { useLanguage } from "../../contexts/LanguageContext";
 import LanguageSwitcher from "../common/LanguageSwitcher";
-import NotificationBell from "../common/NotificationBell";
-import NotificationPanel from "../common/NotificationPanel";
+import NotificationDropdown from "../common/NotificationDropdown";
 
 const AdminHeader = ({ isSidebarCollapsed }) => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -112,7 +111,7 @@ const AdminHeader = ({ isSidebarCollapsed }) => {
             </button>
 
             {/* Notifications */}
-            <NotificationBell />
+            <NotificationDropdown />
 
             {/* User profile */}
             <div className="relative">
@@ -155,9 +154,6 @@ const AdminHeader = ({ isSidebarCollapsed }) => {
           </div>
         </div>
       </header>
-      
-      {/* Notification Panel */}
-      <NotificationPanel />
     </>
   );
 };

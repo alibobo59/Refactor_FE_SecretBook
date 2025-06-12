@@ -14,8 +14,7 @@ import { useAuth } from "../../contexts/AuthContext";
 import { useCart } from "../../contexts/CartContext";
 import { useLanguage } from "../../contexts/LanguageContext";
 import LanguageSwitcher from "../common/LanguageSwitcher";
-import NotificationBell from "../common/NotificationBell";
-import NotificationPanel from "../common/NotificationPanel";
+import NotificationDropdown from "../common/NotificationDropdown";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -48,7 +47,7 @@ const Header = () => {
     // Listen for system theme changes
     const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
     const handleThemeChange = (e) => {
-      if (!("theme" in localStorage)) {
+      if (!localStorage.theme) {
         setDarkMode(e.matches);
         document.documentElement.classList.toggle("dark", e.matches);
       }
@@ -165,8 +164,8 @@ const Header = () => {
                 )}
               </button>
 
-              {/* Notification Bell */}
-              {user && <NotificationBell />}
+              {/* Notification Dropdown */}
+              {user && <NotificationDropdown />}
 
               <Link
                 to="/cart"
@@ -305,7 +304,7 @@ const Header = () => {
                     </span>
                   </Link>
                   <div className="flex items-center gap-2">
-                    {user && <NotificationBell />}
+                    {user && <NotificationDropdown />}
                     <button
                       onClick={() => {
                         toggleDarkMode();
@@ -392,9 +391,6 @@ const Header = () => {
           )}
         </div>
       </header>
-      
-      {/* Notification Panel */}
-      <NotificationPanel />
     </>
   );
 };

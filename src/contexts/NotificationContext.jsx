@@ -11,7 +11,6 @@ export const NotificationProvider = ({ children }) => {
   const { user } = useAuth();
   const [notifications, setNotifications] = useState([]);
   const [unreadCount, setUnreadCount] = useState(0);
-  const [isNotificationPanelOpen, setIsNotificationPanelOpen] = useState(false);
 
   // Load notifications from localStorage when component mounts or user changes
   useEffect(() => {
@@ -21,6 +20,11 @@ export const NotificationProvider = ({ children }) => {
         const parsed = JSON.parse(storedNotifications);
         setNotifications(parsed);
         setUnreadCount(parsed.filter(n => !n.read).length);
+      } else {
+        // Add some demo notifications for new users
+        const demoNotifications = getDemoNotifications(user);
+        setNotifications(demoNotifications);
+        setUnreadCount(demoNotifications.filter(n => !n.read).length);
       }
     } else {
       setNotifications([]);
@@ -34,6 +38,68 @@ export const NotificationProvider = ({ children }) => {
       localStorage.setItem(`notifications_${user.id}`, JSON.stringify(notifications));
     }
   }, [notifications, user]);
+
+  // Demo notifications for new users
+  const getDemoNotifications = (user) => {
+    const baseNotifications = [
+      {
+        id: Date.now() + 1,
+        userId: user.id,
+        title: 'Welcome to Secret Bookstore!',
+        message: 'Thank you for joining our community of book lovers. Explore our vast collection and find your next great read.',
+        type: 'success',
+        read: false,
+        createdAt: new Date().toISOString(),
+        actionUrl: '/books',
+        actionText: 'Browse Books',
+        metadata: {},
+      },
+      {
+        id: Date.now() + 2,
+        userId: user.id,
+        title: 'New Books Added',
+        message: 'We\'ve added 15 new books to our collection this week. Check out the latest arrivals!',
+        type: 'info',
+        read: false,
+        createdAt: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(), // 2 hours ago
+        actionUrl: '/books?filter=new',
+        actionText: 'View New Books',
+        metadata: {},
+      },
+    ];
+
+    // Add admin-specific notifications
+    if (user.isAdmin) {
+      baseNotifications.push(
+        {
+          id: Date.now() + 3,
+          userId: user.id,
+          title: 'Low Stock Alert',
+          message: 'The Great Gatsby is running low on stock (3 remaining). Consider restocking soon.',
+          type: 'warning',
+          read: false,
+          createdAt: new Date(Date.now() - 30 * 60 * 1000).toISOString(), // 30 minutes ago
+          actionUrl: '/admin/books',
+          actionText: 'Manage Inventory',
+          metadata: { bookId: 1, stock: 3 },
+        },
+        {
+          id: Date.now() + 4,
+          userId: user.id,
+          title: 'New Order Received',
+          message: 'Order #ORD-12345 from John Doe requires your attention.',
+          type: 'order',
+          read: true,
+          createdAt: new Date(Date.now() - 4 * 60 * 60 * 1000).toISOString(), // 4 hours ago
+          actionUrl: '/admin/orders',
+          actionText: 'View Order',
+          metadata: { orderId: 'ORD-12345' },
+        }
+      );
+    }
+
+    return baseNotifications;
+  };
 
   // Create a new notification
   const addNotification = (notification) => {
@@ -161,11 +227,6 @@ export const NotificationProvider = ({ children }) => {
     return notifications.filter(notification => !notification.read);
   };
 
-  // Toggle notification panel
-  const toggleNotificationPanel = () => {
-    setIsNotificationPanelOpen(prev => !prev);
-  };
-
   // Predefined notification templates
   const notificationTemplates = {
     orderPlaced: (orderId) => ({
@@ -215,6 +276,20 @@ export const NotificationProvider = ({ children }) => {
       message: 'The system will undergo maintenance tonight from 2:00 AM to 4:00 AM.',
       type: 'system',
     }),
+    newBookAdded: (bookTitle) => ({
+      title: 'New Book Added',
+      message: `"${bookTitle}" has been added to our collection.`,
+      type: 'info',
+      actionUrl: '/books',
+      actionText: 'Browse Books',
+    }),
+    promotionalOffer: (discount) => ({
+      title: 'Special Offer!',
+      message: `Get ${discount}% off on all books this weekend. Limited time offer!`,
+      type: 'success',
+      actionUrl: '/books',
+      actionText: 'Shop Now',
+    }),
   };
 
   // Quick notification methods
@@ -225,11 +300,12 @@ export const NotificationProvider = ({ children }) => {
   const notifyNewOrder = (orderId, customerName) => addNotification(notificationTemplates.newOrder(orderId, customerName));
   const notifyLowStock = (bookTitle, stock) => addNotification(notificationTemplates.lowStock(bookTitle, stock));
   const notifySystemMaintenance = () => addNotification(notificationTemplates.systemMaintenance());
+  const notifyNewBookAdded = (bookTitle) => addNotification(notificationTemplates.newBookAdded(bookTitle));
+  const notifyPromotionalOffer = (discount) => addNotification(notificationTemplates.promotionalOffer(discount));
 
   const value = {
     notifications,
     unreadCount,
-    isNotificationPanelOpen,
     addNotification,
     markAsRead,
     markAllAsRead,
@@ -237,8 +313,6 @@ export const NotificationProvider = ({ children }) => {
     clearAllNotifications,
     getNotificationsByType,
     getUnreadNotifications,
-    toggleNotificationPanel,
-    setIsNotificationPanelOpen,
     // Quick notification methods
     notifyOrderPlaced,
     notifyOrderConfirmed,
@@ -247,6 +321,8 @@ export const NotificationProvider = ({ children }) => {
     notifyNewOrder,
     notifyLowStock,
     notifySystemMaintenance,
+    notifyNewBookAdded,
+    notifyPromotionalOffer,
   };
 
   return (

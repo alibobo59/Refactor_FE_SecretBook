@@ -4,14 +4,10 @@ import { Bell } from 'lucide-react';
 import { useNotification } from '../../contexts/NotificationContext';
 
 const NotificationBell = ({ className = "" }) => {
-  const { unreadCount, toggleNotificationPanel } = useNotification();
+  const { unreadCount } = useNotification();
 
   return (
-    <button
-      onClick={toggleNotificationPanel}
-      className={`relative p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-amber-500 ${className}`}
-      aria-label={`Notifications ${unreadCount > 0 ? `(${unreadCount} unread)` : ''}`}
-    >
+    <div className={`relative ${className}`}>
       <Bell className="h-5 w-5 text-gray-700 dark:text-gray-300" />
       
       {unreadCount > 0 && (
@@ -31,7 +27,7 @@ const NotificationBell = ({ className = "" }) => {
           className="absolute -top-1 -right-1 bg-red-500 rounded-full w-[18px] h-[18px] opacity-75"
         />
       )}
-    </button>
+    </div>
   );
 };
 

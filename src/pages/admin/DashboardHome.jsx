@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import { BookOpen, Tag, AlertCircle, DollarSign } from "lucide-react";
 import { StatCard, Table } from "../../components/admin";
 import { useNotification } from "../../contexts/NotificationContext";
+import NotificationTestPanel from "../../components/admin/NotificationTestPanel";
 
 /**
  * Dashboard home component showing statistics and low stock books
@@ -86,6 +87,9 @@ const DashboardHome = ({ books, categories }) => {
           value={`$${totalValue.toFixed(2)}`}
         />
       </div>
+
+      {/* Notification Test Panel */}
+      <NotificationTestPanel />
 
       {/* Low Stock Alert */}
       <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
