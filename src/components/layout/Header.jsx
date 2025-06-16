@@ -15,7 +15,7 @@ import { useCart } from "../../contexts/CartContext";
 import { useLanguage } from "../../contexts/LanguageContext";
 import LanguageSwitcher from "../common/LanguageSwitcher";
 import NotificationDropdown from "../common/NotificationDropdown";
-import CartDropdown from "../common/CartDropdown";
+
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
