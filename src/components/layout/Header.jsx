@@ -169,7 +169,7 @@ const Header = () => {
               {user && <NotificationDropdown />}
 
               {/* Cart Dropdown */}
-              <CartDropdown />
+              
 
               {user ? (
                 <div className="relative group">
