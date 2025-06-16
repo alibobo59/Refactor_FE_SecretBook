@@ -15,6 +15,7 @@ import { useCart } from "../../contexts/CartContext";
 import { useLanguage } from "../../contexts/LanguageContext";
 import LanguageSwitcher from "../common/LanguageSwitcher";
 import NotificationDropdown from "../common/NotificationDropdown";
+import CartDropdown from "../common/CartDropdown";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -167,16 +168,8 @@ const Header = () => {
               {/* Notification Dropdown */}
               {user && <NotificationDropdown />}
 
-              <Link
-                to="/cart"
-                className="relative p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors duration-200">
-                <ShoppingCart className="h-5 w-5 text-gray-700 dark:text-gray-300" />
-                {cartItems?.length > 0 && (
-                  <span className="absolute -top-1 -right-1 bg-amber-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center animate-pulse">
-                    {cartItems.length}
-                  </span>
-                )}
-              </Link>
+              {/* Cart Dropdown */}
+              <CartDropdown />
 
               {user ? (
                 <div className="relative group">
@@ -191,11 +184,6 @@ const Header = () => {
                         to={`/profile/${user.username}`}
                         className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
                         Profile
-                      </Link>
-                      <Link
-                        to="/my-books"
-                        className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
-                        My Books
                       </Link>
                       <Link
                         to="/orders"
@@ -339,12 +327,6 @@ const Header = () => {
                         className="text-gray-700 dark:text-gray-300"
                         onClick={() => setIsMenuOpen(false)}>
                         Profile
-                      </Link>
-                      <Link
-                        to="/my-books"
-                        className="text-gray-700 dark:text-gray-300"
-                        onClick={() => setIsMenuOpen(false)}>
-                        My Books
                       </Link>
                       <Link
                         to="/orders"
