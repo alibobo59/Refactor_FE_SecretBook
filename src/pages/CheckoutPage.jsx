@@ -442,7 +442,7 @@ const CheckoutPage = () => {
                           {item.title}
                         </h4>
                         <p className="text-xs text-gray-500 dark:text-gray-400">
-                          by {item.author}
+                          by {typeof item.author === 'object' ? item.author?.name || 'Unknown Author' : item.author}
                         </p>
                         <div className="flex justify-between items-center mt-1">
                           <span className="text-sm text-gray-600 dark:text-gray-400">

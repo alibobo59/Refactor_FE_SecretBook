@@ -394,7 +394,7 @@ const ProfilePage = () => {
                                   {item.title}
                                 </h4>
                                 <p className="text-sm text-gray-500 dark:text-gray-400">
-                                  by {item.author}
+                                  by {typeof item.author === 'object' ? item.author?.name || 'Unknown Author' : item.author}
                                 </p>
                               </div>
                               <div className="text-right">
