@@ -36,6 +36,7 @@ const Header = () => {
   });
   const [searchQuery, setSearchQuery] = useState("");
   const [isCartDropdownOpen, setIsCartDropdownOpen] = useState(false);
+  const [cartHoverTimeout, setCartHoverTimeout] = useState(null);
   const { user, logout } = useAuth();
   const { cartItems, updateQuantity, removeFromCart, getCartTotal, getItemCount } = useCart();
   const { t } = useLanguage();
@@ -97,6 +98,32 @@ const Header = () => {
 
   const handleRemoveItem = (bookId) => {
     removeFromCart(bookId);
+  };
+
+  const handleCartMouseEnter = () => {
+    if (cartHoverTimeout) {
+      clearTimeout(cartHoverTimeout);
+      setCartHoverTimeout(null);
+    }
+    setIsCartDropdownOpen(true);
+  };
+
+  const handleCartMouseLeave = () => {
+    const timeout = setTimeout(() => {
+      setIsCartDropdownOpen(false);
+    }, 150); // Small delay to allow moving to dropdown
+    setCartHoverTimeout(timeout);
+  };
+
+  const handleDropdownMouseEnter = () => {
+    if (cartHoverTimeout) {
+      clearTimeout(cartHoverTimeout);
+      setCartHoverTimeout(null);
+    }
+  };
+
+  const handleDropdownMouseLeave = () => {
+    setIsCartDropdownOpen(false);
   };
 
   return (
@@ -184,8 +211,8 @@ const Header = () => {
               {/* Cart Dropdown */}
               <div 
                 className="relative"
-                onMouseEnter={() => setIsCartDropdownOpen(true)}
-                onMouseLeave={() => setIsCartDropdownOpen(false)}
+                onMouseEnter={handleCartMouseEnter}
+                onMouseLeave={handleCartMouseLeave}
               >
                 <Link
                   to="/checkout"
@@ -212,6 +239,8 @@ const Header = () => {
                       exit={{ opacity: 0, y: -10, scale: 0.95 }}
                       transition={{ duration: 0.2 }}
                       className="absolute right-0 mt-2 w-80 bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 z-50"
+                      onMouseEnter={handleDropdownMouseEnter}
+                      onMouseLeave={handleDropdownMouseLeave}
                     >
                       {/* Header */}
                       <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
