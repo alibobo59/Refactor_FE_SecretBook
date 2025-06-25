@@ -11,6 +11,7 @@ import OrderConfirmationPage from "./pages/OrderConfirmationPage";
 import OrderManagementPage from "./pages/OrderManagementPage";
 import ProfilePage from "./pages/ProfilePage";
 import ReviewerProfilePage from "./pages/ReviewerProfilePage";
+import RecommendationsPage from "./pages/RecommendationsPage";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import AdminDashboard from "./pages/admin/Dashboard";
@@ -33,6 +34,7 @@ function App() {
           <Route path="/order-confirmation/:orderId" element={<OrderConfirmationPage />} />
           <Route path="/profile/:username" element={<ProfilePage />} />
           <Route path="/reviewer/:reviewerId" element={<ReviewerProfilePage />} />
+          <Route path="/recommendations" element={<RecommendationsPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/admin/*" element={<AdminDashboard />} />

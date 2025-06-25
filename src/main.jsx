@@ -6,6 +6,7 @@ import { CartProvider } from "./contexts/CartContext";
 import { ReviewProvider } from "./contexts/ReviewContext";
 import { OrderProvider } from "./contexts/OrderContext";
 import { NotificationProvider } from "./contexts/NotificationContext";
+import { RecommendationProvider } from "./contexts/RecommendationContext";
 import LanguageProvider from "./contexts/LanguageContext";
 import ReactDOM from "react-dom/client";
 import React from "react";
@@ -22,7 +23,9 @@ root.render(
               <CartProvider>
                 <OrderProvider>
                   <ReviewProvider>
-                    <App />
+                    <RecommendationProvider>
+                      <App />
+                    </RecommendationProvider>
                   </ReviewProvider>
                 </OrderProvider>
               </CartProvider>

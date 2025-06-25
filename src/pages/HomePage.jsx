@@ -1,13 +1,19 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useBook } from '../contexts/BookContext';
+import { useRecommendation } from '../contexts/RecommendationContext';
+import { useAuth } from '../contexts/AuthContext';
 import { motion } from 'framer-motion';
-import { Search, ChevronRight } from 'lucide-react';
+import { Search, ChevronRight, Sparkles } from 'lucide-react';
 import BookCard from '../components/books/BookCard';
+import PersonalizedRecommendations from '../components/recommendations/PersonalizedRecommendations';
+import RecommendationSection from '../components/recommendations/RecommendationSection';
 import { useLanguage } from '../contexts/LanguageContext';
 
 const HomePage = () => {
   const { books, categories, loading } = useBook();
+  const { getTrendingBooks, getNewReleases, getBestSellers } = useRecommendation();
+  const { user } = useAuth();
   const [searchQuery, setSearchQuery] = React.useState('');
   const { t } = useLanguage();
 
@@ -19,13 +25,10 @@ const HomePage = () => {
       .slice(0, 4);
   }, [books]);
 
-  // Get new releases (most recent books)
-  const newReleases = React.useMemo(() => {
-    if (!books) return [];
-    return [...books]
-      .sort((a, b) => new Date(b.published_date) - new Date(a.published_date))
-      .slice(0, 4);
-  }, [books]);
+  // Get recommendation sections
+  const trendingBooks = React.useMemo(() => getTrendingBooks(4), [books]);
+  const newReleases = React.useMemo(() => getNewReleases(4), [books]);
+  const bestSellers = React.useMemo(() => getBestSellers(4), [books]);
 
   const handleSearch = (e) => {
     e.preventDefault();
@@ -94,6 +97,43 @@ const HomePage = () => {
           </motion.div>
         </div>
       </section>
+
+      {/* Personalized Recommendations for Logged-in Users */}
+      {user && (
+        <section className="py-8 bg-gradient-to-r from-purple-50 to-pink-50 dark:from-gray-800 dark:to-gray-900">
+          <div className="container mx-auto px-4">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="text-center mb-8"
+            >
+              <div className="flex items-center justify-center gap-3 mb-4">
+                <Sparkles className="h-8 w-8 text-purple-600 dark:text-purple-400" />
+                <h2 className="text-3xl font-serif font-bold text-gray-800 dark:text-white">
+                  Just for You, {user.name}
+                </h2>
+              </div>
+              <p className="text-gray-600 dark:text-gray-400 text-lg">
+                Personalized book recommendations based on your reading preferences
+              </p>
+            </motion.div>
+            
+            <PersonalizedRecommendations />
+            
+            <div className="text-center mt-8">
+              <Link
+                to="/recommendations"
+                className="inline-flex items-center gap-2 px-6 py-3 bg-purple-600 text-white rounded-full hover:bg-purple-700 transition-colors font-medium"
+              >
+                <Sparkles className="h-5 w-5" />
+                View All Recommendations
+                <ChevronRight className="h-5 w-5" />
+              </Link>
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* Featured Books Section */}
       <section className="py-16 bg-amber-50 dark:bg-gray-900">
@@ -183,51 +223,27 @@ const HomePage = () => {
         </div>
       </section>
 
-      {/* New Releases Section */}
-      <section className="py-16 bg-amber-50 dark:bg-gray-900">
-        <div className="container mx-auto px-4">
-          <div className="flex justify-between items-center mb-8">
-            <h2 className="text-3xl font-serif font-bold text-gray-800 dark:text-white">
-              {t('home.new')}
-            </h2>
-            <Link 
-              to="/new-releases" 
-              className="text-amber-600 dark:text-amber-500 hover:text-amber-700 dark:hover:text-amber-400 font-medium flex items-center"
-            >
-              {t('common.viewAll')}
-              <ChevronRight className="h-5 w-5 ml-1" />
-            </Link>
-          </div>
+      {/* Recommendation Sections */}
+      <RecommendationSection
+        title="Trending Now"
+        books={trendingBooks}
+        className="bg-amber-50 dark:bg-gray-900"
+        viewAllLink="/recommendations?type=trending"
+      />
 
-          {loading ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-              {[...Array(4)].map((_, index) => (
-                <div key={index} className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 h-96 animate-pulse">
-                  <div className="h-52 bg-gray-300 dark:bg-gray-700 rounded-md mb-4"></div>
-                  <div className="h-6 bg-gray-300 dark:bg-gray-700 rounded w-3/4 mb-3"></div>
-                  <div className="h-4 bg-gray-300 dark:bg-gray-700 rounded w-1/2 mb-3"></div>
-                  <div className="h-4 bg-gray-300 dark:bg-gray-700 rounded w-full mb-3"></div>
-                  <div className="h-4 bg-gray-300 dark:bg-gray-700 rounded w-3/4"></div>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <motion.div 
-              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8"
-              variants={containerVariants}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, margin: "-50px" }}
-            >
-              {newReleases.map(book => (
-                <motion.div key={book.id} variants={itemVariants}>
-                  <BookCard book={book} />
-                </motion.div>
-              ))}
-            </motion.div>
-          )}
-        </div>
-      </section>
+      <RecommendationSection
+        title="New Releases"
+        books={newReleases}
+        className="bg-white dark:bg-gray-800"
+        viewAllLink="/recommendations?type=new"
+      />
+
+      <RecommendationSection
+        title="Best Sellers"
+        books={bestSellers}
+        className="bg-amber-50 dark:bg-gray-900"
+        viewAllLink="/recommendations?type=bestsellers"
+      />
 
       {/* Join Community Section */}
       <section className="py-16 bg-teal-600 text-white">
@@ -245,12 +261,22 @@ const HomePage = () => {
             <p className="text-xl mb-8 opacity-90">
               {t('home.community.subtitle')}
             </p>
-            <Link 
-              to="/register" 
-              className="inline-block px-8 py-3 bg-white text-teal-600 font-medium rounded-full hover:bg-opacity-90 transition-colors duration-200"
-            >
-              {t('nav.register')}
-            </Link>
+            {!user ? (
+              <Link 
+                to="/register" 
+                className="inline-block px-8 py-3 bg-white text-teal-600 font-medium rounded-full hover:bg-opacity-90 transition-colors duration-200"
+              >
+                {t('nav.register')}
+              </Link>
+            ) : (
+              <Link 
+                to="/recommendations" 
+                className="inline-flex items-center gap-2 px-8 py-3 bg-white text-teal-600 font-medium rounded-full hover:bg-opacity-90 transition-colors duration-200"
+              >
+                <Sparkles className="h-5 w-5" />
+                Explore Recommendations
+              </Link>
+            )}
           </motion.div>
         </div>
       </section>

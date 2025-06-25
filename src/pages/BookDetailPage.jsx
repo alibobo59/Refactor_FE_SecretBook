@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { useBook } from "../contexts/BookContext";
 import { useCart } from "../contexts/CartContext";
 import { useAuth } from "../contexts/AuthContext";
+import { useRecommendation } from "../contexts/RecommendationContext";
 import {
   Star,
   ShoppingCart,
@@ -16,12 +17,14 @@ import {
 import { motion } from "framer-motion";
 import { useLanguage } from "../contexts/LanguageContext";
 import ReviewInteractionButtons from "../components/reviews/ReviewInteractionButtons";
+import SimilarBooks from "../components/recommendations/SimilarBooks";
 
 const BookDetailPage = () => {
   const { id } = useParams();
   const { getBookById, addRating, loading } = useBook();
   const { addToCart } = useCart();
   const { user } = useAuth();
+  const { trackBookView, trackRating } = useRecommendation();
   const { t } = useLanguage();
   const book = getBookById(id);
 
@@ -30,6 +33,13 @@ const BookDetailPage = () => {
   const [review, setReview] = useState("");
   const [hoveredRating, setHoveredRating] = useState(0);
   const [showReviewForm, setShowReviewForm] = useState(false);
+
+  // Track book view when component mounts
+  useEffect(() => {
+    if (book && user) {
+      trackBookView(book.id);
+    }
+  }, [book, user, trackBookView]);
 
   if (loading) {
     return (
@@ -81,6 +91,11 @@ const BookDetailPage = () => {
 
     const success = await addRating(book.id, rating, review);
     if (success) {
+      // Track the rating for recommendations
+      if (user) {
+        trackRating(book.id, rating);
+      }
+      
       setRating(0);
       setReview("");
       setShowReviewForm(false);
@@ -216,6 +231,13 @@ const BookDetailPage = () => {
           </div>
         </motion.div>
       </div>
+
+      {/* Similar Books Section */}
+      <SimilarBooks 
+        bookId={parseInt(id)} 
+        currentBook={book}
+        className="bg-gray-50 dark:bg-gray-800 mt-16 -mx-4 px-4"
+      />
 
       {/* Reviews Section */}
       <div className="mt-16">
