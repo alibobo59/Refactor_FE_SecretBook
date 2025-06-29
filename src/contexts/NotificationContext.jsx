@@ -11,6 +11,7 @@ export const NotificationProvider = ({ children }) => {
   const { user } = useAuth();
   const [notifications, setNotifications] = useState([]);
   const [unreadCount, setUnreadCount] = useState(0);
+  const [toastQueue, setToastQueue] = useState([]);
 
   // Load notifications from localStorage when component mounts or user changes
   useEffect(() => {
@@ -127,54 +128,25 @@ export const NotificationProvider = ({ children }) => {
     return newNotification;
   };
 
-  // Show toast notification
+  // Show toast notification with improved stacking
   const showToast = (notification) => {
-    // Create toast element
-    const toast = document.createElement('div');
-    toast.className = `fixed top-4 right-4 z-50 max-w-sm bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg p-4 transform transition-all duration-300 translate-x-full`;
+    const toastId = `toast-${Date.now()}-${Math.random()}`;
     
-    // Set toast content based on type
-    const typeColors = {
-      success: 'border-l-4 border-green-500',
-      error: 'border-l-4 border-red-500',
-      warning: 'border-l-4 border-yellow-500',
-      info: 'border-l-4 border-blue-500',
-      order: 'border-l-4 border-purple-500',
-      system: 'border-l-4 border-gray-500',
-    };
-
-    toast.className += ` ${typeColors[notification.type] || typeColors.info}`;
-    
-    toast.innerHTML = `
-      <div class="flex items-start gap-3">
-        <div class="flex-grow">
-          <h4 class="font-medium text-gray-900 dark:text-white text-sm">${notification.title}</h4>
-          <p class="text-gray-600 dark:text-gray-400 text-sm mt-1">${notification.message}</p>
-        </div>
-        <button class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300" onclick="this.parentElement.parentElement.remove()">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-          </svg>
-        </button>
-      </div>
-    `;
-
-    document.body.appendChild(toast);
-
-    // Animate in
-    setTimeout(() => {
-      toast.classList.remove('translate-x-full');
-    }, 100);
+    // Add to toast queue
+    setToastQueue(prev => {
+      const newQueue = [{ ...notification, toastId }, ...prev];
+      // Limit to maximum 5 toasts
+      return newQueue.slice(0, 5);
+    });
 
     // Auto remove after 5 seconds
     setTimeout(() => {
-      toast.classList.add('translate-x-full');
-      setTimeout(() => {
-        if (toast.parentNode) {
-          toast.parentNode.removeChild(toast);
-        }
-      }, 300);
+      removeToast(toastId);
     }, 5000);
+  };
+
+  const removeToast = (toastId) => {
+    setToastQueue(prev => prev.filter(toast => toast.toastId !== toastId));
   };
 
   // Mark notification as read
@@ -306,6 +278,8 @@ export const NotificationProvider = ({ children }) => {
   const value = {
     notifications,
     unreadCount,
+    toastQueue,
+    removeToast,
     addNotification,
     markAsRead,
     markAllAsRead,
