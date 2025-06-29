@@ -17,6 +17,8 @@ import { ChangelogProvider } from "./contexts/ChangelogContext";
 import { MediaLibraryProvider } from "./contexts/MediaLibraryContext";
 import { AttributeProvider } from "./contexts/AttributeContext";
 import { VariationProvider } from "./contexts/VariationContext";
+import { PromotionProvider } from "./contexts/PromotionContext";
+import { CommentProvider } from "./contexts/CommentContext";
 import LanguageProvider from "./contexts/LanguageContext";
 import ToastContainer from "./components/common/ToastContainer";
 import ReactDOM from "react-dom/client";
@@ -35,28 +37,32 @@ root.render(
                 <MediaLibraryProvider>
                   <AttributeProvider>
                     <VariationProvider>
-                      <NotificationProvider>
-                        <AnalyticsProvider>
-                          <MarketingProvider>
-                            <SecurityProvider>
-                              <ContentProvider>
-                                <BookProvider>
-                                  <CartProvider>
-                                    <OrderProvider>
-                                      <ReviewProvider>
-                                        <RecommendationProvider>
-                                          <App />
-                                          <ToastContainer />
-                                        </RecommendationProvider>
-                                      </ReviewProvider>
-                                    </OrderProvider>
-                                  </CartProvider>
-                                </BookProvider>
-                              </ContentProvider>
-                            </SecurityProvider>
-                          </MarketingProvider>
-                        </AnalyticsProvider>
-                      </NotificationProvider>
+                      <PromotionProvider>
+                        <CommentProvider>
+                          <NotificationProvider>
+                            <AnalyticsProvider>
+                              <MarketingProvider>
+                                <SecurityProvider>
+                                  <ContentProvider>
+                                    <BookProvider>
+                                      <CartProvider>
+                                        <OrderProvider>
+                                          <ReviewProvider>
+                                            <RecommendationProvider>
+                                              <App />
+                                              <ToastContainer />
+                                            </RecommendationProvider>
+                                          </ReviewProvider>
+                                        </OrderProvider>
+                                      </CartProvider>
+                                    </BookProvider>
+                                  </ContentProvider>
+                                </SecurityProvider>
+                              </MarketingProvider>
+                            </AnalyticsProvider>
+                          </NotificationProvider>
+                        </CommentProvider>
+                      </PromotionProvider>
                     </VariationProvider>
                   </AttributeProvider>
                 </MediaLibraryProvider>
