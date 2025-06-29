@@ -23,6 +23,7 @@ import {
   FileText,
   UserCheck,
   Image,
+  Settings,
 } from "lucide-react";
 
 import BookManagement from "./BookManagement";
@@ -44,6 +45,7 @@ import BookCreatePage from "./BookCreatePage";
 import BookEditPage from "./BookEditPage";
 import MediaLibrary from "./MediaLibrary";
 import BulkOperationReport from "./BulkOperationReport";
+import AttributeManagement from "./AttributeManagement";
 import AdminHeader from "../../components/admin/AdminHeader";
 
 const AdminDashboard = () => {
@@ -92,6 +94,8 @@ const AdminDashboard = () => {
       setActiveTab('content');
     } else if (path.startsWith('/admin/media')) {
       setActiveTab('media');
+    } else if (path.startsWith('/admin/attributes')) {
+      setActiveTab('attributes');
     } else if (path.startsWith('/admin/logs')) {
       setActiveTab('logs');
     }
@@ -154,6 +158,9 @@ const AdminDashboard = () => {
       case 'media':
         navigate('/admin/media');
         break;
+      case 'attributes':
+        navigate('/admin/attributes');
+        break;
       case 'logs':
         navigate('/admin/logs');
         break;
@@ -170,6 +177,7 @@ const AdminDashboard = () => {
     },
     { id: "books", label: "Books", icon: <BookOpen size={20} /> },
     { id: "categories", label: "Categories", icon: <Tag size={20} /> },
+    { id: "attributes", label: "Attributes", icon: <Settings size={20} /> },
     { id: "authors", label: "Authors", icon: <UserSquare2 size={20} /> },
     { id: "publishers", label: "Publishers", icon: <Building2 size={20} /> },
     { id: "users", label: "Users", icon: <Users size={20} /> },
@@ -284,6 +292,7 @@ const AdminDashboard = () => {
             
             {/* Other Admin Routes */}
             <Route path="/categories" element={<CategoryManagement />} />
+            <Route path="/attributes" element={<AttributeManagement />} />
             <Route path="/authors" element={<AuthorManagement />} />
             <Route path="/publishers" element={<PublisherManagement />} />
             <Route path="/users" element={<UserManagement />} />
