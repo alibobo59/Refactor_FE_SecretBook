@@ -40,6 +40,8 @@ import EnhancedUserManagement from "./EnhancedUserManagement";
 import SecurityAudit from "./SecurityAudit";
 import ContentManagement from "./ContentManagement";
 import BookDetailPage from "./BookDetailPage";
+import BookCreatePage from "./BookCreatePage";
+import BookEditPage from "./BookEditPage";
 import MediaLibrary from "./MediaLibrary";
 import BulkOperationReport from "./BulkOperationReport";
 import AdminHeader from "../../components/admin/AdminHeader";
@@ -200,7 +202,9 @@ const AdminDashboard = () => {
                 {activeTab === "logs" && <LogManagement />}
               </>
             } />
+            <Route path="/books/create" element={<BookCreatePage />} />
             <Route path="/books/:id" element={<BookDetailPage />} />
+            <Route path="/books/:id/edit" element={<BookEditPage />} />
             <Route path="/bulk-operations/:operationId/report" element={<BulkOperationReport />} />
           </Routes>
         </main>
