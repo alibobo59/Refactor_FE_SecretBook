@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Routes, Route } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
 import { useBook } from "../../contexts/BookContext";
 import {
@@ -22,6 +22,7 @@ import {
   Shield,
   FileText,
   UserCheck,
+  Image,
 } from "lucide-react";
 
 import BookManagement from "./BookManagement";
@@ -38,6 +39,9 @@ import BulkOperations from "./BulkOperations";
 import EnhancedUserManagement from "./EnhancedUserManagement";
 import SecurityAudit from "./SecurityAudit";
 import ContentManagement from "./ContentManagement";
+import BookDetailPage from "./BookDetailPage";
+import MediaLibrary from "./MediaLibrary";
+import BulkOperationReport from "./BulkOperationReport";
 import AdminHeader from "../../components/admin/AdminHeader";
 
 const AdminDashboard = () => {
@@ -81,6 +85,7 @@ const AdminDashboard = () => {
     { id: "bulk-ops", label: "Bulk Operations", icon: <Package size={20} /> },
     { id: "security", label: "Security", icon: <Shield size={20} /> },
     { id: "content", label: "Content", icon: <FileText size={20} /> },
+    { id: "media", label: "Media Library", icon: <Image size={20} /> },
     { id: "logs", label: "System Logs", icon: <Activity size={20} /> },
   ];
 
@@ -171,24 +176,33 @@ const AdminDashboard = () => {
 
         {/* Content Area */}
         <main className="p-6 mt-2 md:mt-0 md:pt-16 flex-1 overflow-auto">
-          {activeTab === "dashboard" && (
-            <DashboardHome books={books} categories={categories} />
-          )}
-          {activeTab === "books" && (
-            <BookManagement books={books} categories={categories} />
-          )}
-          {activeTab === "categories" && <CategoryManagement />}
-          {activeTab === "authors" && <AuthorManagement />}
-          {activeTab === "publishers" && <PublisherManagement />}
-          {activeTab === "users" && <UserManagement />}
-          {activeTab === "enhanced-users" && <EnhancedUserManagement />}
-          {activeTab === "orders" && <OrderManagement />}
-          {activeTab === "analytics" && <AnalyticsDashboard />}
-          {activeTab === "marketing" && <MarketingManagement />}
-          {activeTab === "bulk-ops" && <BulkOperations />}
-          {activeTab === "security" && <SecurityAudit />}
-          {activeTab === "content" && <ContentManagement />}
-          {activeTab === "logs" && <LogManagement />}
+          <Routes>
+            <Route path="/" element={
+              <>
+                {activeTab === "dashboard" && (
+                  <DashboardHome books={books} categories={categories} />
+                )}
+                {activeTab === "books" && (
+                  <BookManagement books={books} categories={categories} />
+                )}
+                {activeTab === "categories" && <CategoryManagement />}
+                {activeTab === "authors" && <AuthorManagement />}
+                {activeTab === "publishers" && <PublisherManagement />}
+                {activeTab === "users" && <UserManagement />}
+                {activeTab === "enhanced-users" && <EnhancedUserManagement />}
+                {activeTab === "orders" && <OrderManagement />}
+                {activeTab === "analytics" && <AnalyticsDashboard />}
+                {activeTab === "marketing" && <MarketingManagement />}
+                {activeTab === "bulk-ops" && <BulkOperations />}
+                {activeTab === "security" && <SecurityAudit />}
+                {activeTab === "content" && <ContentManagement />}
+                {activeTab === "media" && <MediaLibrary />}
+                {activeTab === "logs" && <LogManagement />}
+              </>
+            } />
+            <Route path="/books/:id" element={<BookDetailPage />} />
+            <Route path="/bulk-operations/:operationId/report" element={<BulkOperationReport />} />
+          </Routes>
         </main>
       </div>
     </div>

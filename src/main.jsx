@@ -13,6 +13,8 @@ import { AnalyticsProvider } from "./contexts/AnalyticsContext";
 import { MarketingProvider } from "./contexts/MarketingContext";
 import { SecurityProvider } from "./contexts/SecurityContext";
 import { ContentProvider } from "./contexts/ContentContext";
+import { ChangelogProvider } from "./contexts/ChangelogContext";
+import { MediaLibraryProvider } from "./contexts/MediaLibraryContext";
 import LanguageProvider from "./contexts/LanguageContext";
 import ToastContainer from "./components/common/ToastContainer";
 import ReactDOM from "react-dom/client";
@@ -27,28 +29,32 @@ root.render(
         <ToastProvider>
           <AuthProvider>
             <LogProvider>
-              <NotificationProvider>
-                <AnalyticsProvider>
-                  <MarketingProvider>
-                    <SecurityProvider>
-                      <ContentProvider>
-                        <BookProvider>
-                          <CartProvider>
-                            <OrderProvider>
-                              <ReviewProvider>
-                                <RecommendationProvider>
-                                  <App />
-                                  <ToastContainer />
-                                </RecommendationProvider>
-                              </ReviewProvider>
-                            </OrderProvider>
-                          </CartProvider>
-                        </BookProvider>
-                      </ContentProvider>
-                    </SecurityProvider>
-                  </MarketingProvider>
-                </AnalyticsProvider>
-              </NotificationProvider>
+              <ChangelogProvider>
+                <MediaLibraryProvider>
+                  <NotificationProvider>
+                    <AnalyticsProvider>
+                      <MarketingProvider>
+                        <SecurityProvider>
+                          <ContentProvider>
+                            <BookProvider>
+                              <CartProvider>
+                                <OrderProvider>
+                                  <ReviewProvider>
+                                    <RecommendationProvider>
+                                      <App />
+                                      <ToastContainer />
+                                    </RecommendationProvider>
+                                  </ReviewProvider>
+                                </OrderProvider>
+                              </CartProvider>
+                            </BookProvider>
+                          </ContentProvider>
+                        </SecurityProvider>
+                      </MarketingProvider>
+                    </AnalyticsProvider>
+                  </NotificationProvider>
+                </MediaLibraryProvider>
+              </ChangelogProvider>
             </LogProvider>
           </AuthProvider>
         </ToastProvider>
