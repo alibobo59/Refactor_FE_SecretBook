@@ -3,20 +3,20 @@ import { Routes, Route, useLocation } from "react-router-dom";
 
 import Header from "./components/layout/Header";
 import Footer from "./components/layout/Footer";
-import HomePage from "./pages/HomePage";
-import BookDetailPage from "./pages/BookDetailPage";
-import BrowseBooksPage from "./pages/BrowseBooksPage";
-import CartPage from "./pages/CartPage";
-import CheckoutPage from "./pages/CheckoutPage";
-import OrderConfirmationPage from "./pages/OrderConfirmationPage";
-import OrderManagementPage from "./pages/OrderManagementPage";
-import ProfilePage from "./pages/ProfilePage";
-import ReviewerProfilePage from "./pages/ReviewerProfilePage";
-import RecommendationsPage from "./pages/RecommendationsPage";
-import LoginPage from "./pages/LoginPage";
-import RegisterPage from "./pages/RegisterPage";
+import HomePage from "./pages/client/HomePage";
+import BookDetailPage from "./pages/client/BookDetailPage";
+import BrowseBooksPage from "./pages/client/BrowseBooksPage";
+import CartPage from "./pages/client/CartPage";
+import CheckoutPage from "./pages/client/CheckoutPage";
+import OrderConfirmationPage from "./pages/client/OrderConfirmationPage";
+import OrderManagementPage from "./pages/client/OrderManagementPage";
+import ProfilePage from "./pages/client/ProfilePage";
+import ReviewerProfilePage from "./pages/client/ReviewerProfilePage";
+import RecommendationsPage from "./pages/client/RecommendationsPage";
+import LoginPage from "./pages/client/LoginPage";
+import RegisterPage from "./pages/client/RegisterPage";
 import AdminDashboard from "./pages/admin/Dashboard";
-import NotFoundPage from "./pages/NotFoundPage";
+import NotFoundPage from "./pages/client/NotFoundPage";
 
 function App() {
   const location = useLocation();
