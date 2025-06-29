@@ -15,6 +15,7 @@ import {
   ChevronRight,
   Building2,
   UserSquare2,
+  Activity,
 } from "lucide-react";
 
 import BookManagement from "./BookManagement";
@@ -24,6 +25,7 @@ import OrderManagement from "./OrderManagement";
 import DashboardHome from "./DashboardHome";
 import AuthorManagement from "./AuthorManagement";
 import PublisherManagement from "./PublisherManagement";
+import LogManagement from "./LogManagement";
 import AdminHeader from "../../components/admin/AdminHeader";
 
 const AdminDashboard = () => {
@@ -61,6 +63,7 @@ const AdminDashboard = () => {
     { id: "publishers", label: "Publishers", icon: <Building2 size={20} /> },
     { id: "users", label: "Users", icon: <Users size={20} /> },
     { id: "orders", label: "Orders", icon: <ShoppingCart size={20} /> },
+    { id: "logs", label: "System Logs", icon: <Activity size={20} /> },
   ];
 
   return (
@@ -161,6 +164,7 @@ const AdminDashboard = () => {
           {activeTab === "publishers" && <PublisherManagement />}
           {activeTab === "users" && <UserManagement />}
           {activeTab === "orders" && <OrderManagement />}
+          {activeTab === "logs" && <LogManagement />}
         </main>
       </div>
     </div>

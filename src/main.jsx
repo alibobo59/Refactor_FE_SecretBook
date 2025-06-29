@@ -7,6 +7,7 @@ import { ReviewProvider } from "./contexts/ReviewContext";
 import { OrderProvider } from "./contexts/OrderContext";
 import { NotificationProvider } from "./contexts/NotificationContext";
 import { RecommendationProvider } from "./contexts/RecommendationContext";
+import { LogProvider } from "./contexts/LogContext";
 import LanguageProvider from "./contexts/LanguageContext";
 import ReactDOM from "react-dom/client";
 import React from "react";
@@ -18,19 +19,21 @@ root.render(
     <BrowserRouter>
       <LanguageProvider>
         <AuthProvider>
-          <NotificationProvider>
-            <BookProvider>
-              <CartProvider>
-                <OrderProvider>
-                  <ReviewProvider>
-                    <RecommendationProvider>
-                      <App />
-                    </RecommendationProvider>
-                  </ReviewProvider>
-                </OrderProvider>
-              </CartProvider>
-            </BookProvider>
-          </NotificationProvider>
+          <LogProvider>
+            <NotificationProvider>
+              <BookProvider>
+                <CartProvider>
+                  <OrderProvider>
+                    <ReviewProvider>
+                      <RecommendationProvider>
+                        <App />
+                      </RecommendationProvider>
+                    </ReviewProvider>
+                  </OrderProvider>
+                </CartProvider>
+              </BookProvider>
+            </NotificationProvider>
+          </LogProvider>
         </AuthProvider>
       </LanguageProvider>
     </BrowserRouter>
