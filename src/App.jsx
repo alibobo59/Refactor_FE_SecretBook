@@ -6,6 +6,7 @@ import Footer from "./components/layout/Footer";
 import HomePage from "./pages/HomePage";
 import BookDetailPage from "./pages/BookDetailPage";
 import BrowseBooksPage from "./pages/BrowseBooksPage";
+import CartPage from "./pages/CartPage";
 import CheckoutPage from "./pages/CheckoutPage";
 import OrderConfirmationPage from "./pages/OrderConfirmationPage";
 import OrderManagementPage from "./pages/OrderManagementPage";
@@ -29,6 +30,7 @@ function App() {
           <Route path="/" element={<HomePage />} />
           <Route path="/books" element={<BrowseBooksPage />} />
           <Route path="/books/:id" element={<BookDetailPage />} />
+          <Route path="/cart" element={<CartPage />} />
           <Route path="/checkout" element={<CheckoutPage />} />
           <Route path="/orders" element={<OrderManagementPage />} />
           <Route path="/order-confirmation/:orderId" element={<OrderConfirmationPage />} />

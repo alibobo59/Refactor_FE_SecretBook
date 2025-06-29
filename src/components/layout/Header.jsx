@@ -95,10 +95,6 @@ const Header = () => {
     console.log("Searching for:", searchQuery);
   };
 
-
-
-
-
   return (
     <>
       <header
@@ -181,8 +177,24 @@ const Header = () => {
               {/* Notification Dropdown */}
               {user && <NotificationDropdown />}
 
-              {/* Cart Dropdown */}
-              <CartDropdown />
+              {/* Cart Button - Link to Cart Page */}
+              <Link
+                to="/cart"
+                className="relative p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-amber-500"
+                aria-label={`Shopping cart ${getItemCount() > 0 ? `(${getItemCount()} items)` : ''}`}
+              >
+                <ShoppingCart className="h-5 w-5 text-gray-700 dark:text-gray-300" />
+                
+                {getItemCount() > 0 && (
+                  <motion.span
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    className="absolute -top-2 -right-2 bg-amber-600 text-white text-xs rounded-full min-w-[18px] h-[18px] flex items-center justify-center font-medium border-2 border-white dark:border-gray-800"
+                  >
+                    {getItemCount() > 99 ? '99+' : getItemCount()}
+                  </motion.span>
+                )}
+              </Link>
 
               {user ? (
                 <UserProfileDropdown />
@@ -263,7 +275,7 @@ const Header = () => {
 
                 <div className="flex justify-between items-center pt-2 border-t border-gray-200 dark:border-gray-700">
                   <Link
-                    to="/checkout"
+                    to="/cart"
                     className="flex items-center space-x-2 text-gray-700 dark:text-gray-300"
                     onClick={() => setIsMenuOpen(false)}>
                     <div className="relative">

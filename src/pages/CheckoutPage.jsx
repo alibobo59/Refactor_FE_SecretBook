@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useCart } from "../contexts/CartContext";
 import { useAuth } from "../contexts/AuthContext";
@@ -25,6 +25,7 @@ const CheckoutPage = () => {
   const { t } = useLanguage();
   const navigate = useNavigate();
 
+  const [checkoutItems, setCheckoutItems] = useState([]);
   const [formData, setFormData] = useState({
     firstName: user?.name?.split(' ')[0] || '',
     lastName: user?.name?.split(' ').slice(1).join(' ') || '',
@@ -38,6 +39,22 @@ const CheckoutPage = () => {
 
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Load checkout items from sessionStorage or fallback to all cart items
+  useEffect(() => {
+    const storedCheckoutItems = sessionStorage.getItem('checkoutItems');
+    if (storedCheckoutItems) {
+      try {
+        const items = JSON.parse(storedCheckoutItems);
+        setCheckoutItems(items);
+      } catch (error) {
+        console.error('Failed to parse checkout items:', error);
+        setCheckoutItems(cartItems);
+      }
+    } else {
+      setCheckoutItems(cartItems);
+    }
+  }, [cartItems]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -82,6 +99,10 @@ const CheckoutPage = () => {
     return Object.keys(newErrors).length === 0;
   };
 
+  const getCheckoutTotal = () => {
+    return checkoutItems.reduce((total, item) => total + (parseFloat(item.price) || 0) * item.quantity, 0);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     
@@ -89,8 +110,8 @@ const CheckoutPage = () => {
       return;
     }
 
-    if (cartItems.length === 0) {
-      alert('Your cart is empty');
+    if (checkoutItems.length === 0) {
+      alert('No items to checkout');
       return;
     }
 
@@ -98,7 +119,7 @@ const CheckoutPage = () => {
 
     try {
       const orderData = {
-        items: cartItems.map(item => ({
+        items: checkoutItems.map(item => ({
           bookId: item.id,
           title: item.title,
           author: item.author,
@@ -117,14 +138,17 @@ const CheckoutPage = () => {
           email: formData.email,
           phone: formData.phone,
         },
-        subtotal: getCartTotal(),
+        subtotal: getCheckoutTotal(),
         shipping: 0, // Free shipping
-        tax: getCartTotal() * 0.1, // 10% tax
-        total: getCartTotal() + (getCartTotal() * 0.1),
+        tax: getCheckoutTotal() * 0.1, // 10% tax
+        total: getCheckoutTotal() + (getCheckoutTotal() * 0.1),
         notes: formData.notes,
       };
 
       const order = await createOrder(orderData);
+      
+      // Clear checkout items from sessionStorage
+      sessionStorage.removeItem('checkoutItems');
       
       // Redirect to order confirmation page
       navigate(`/order-confirmation/${order.id}`);
@@ -136,22 +160,22 @@ const CheckoutPage = () => {
     }
   };
 
-  if (cartItems.length === 0) {
+  if (checkoutItems.length === 0) {
     return (
       <div className="container mx-auto px-4 py-8">
         <div className="text-center">
           <Package className="h-16 w-16 text-gray-400 mx-auto mb-4" />
           <h1 className="text-2xl font-bold text-gray-800 dark:text-white mb-4">
-            Your cart is empty
+            No items to checkout
           </h1>
           <p className="text-gray-600 dark:text-gray-400 mb-6">
-            Add some books to your cart before proceeding to checkout.
+            Please add some books to your cart before proceeding to checkout.
           </p>
           <button
-            onClick={() => navigate('/books')}
+            onClick={() => navigate('/cart')}
             className="inline-flex items-center px-6 py-3 bg-amber-600 text-white rounded-md hover:bg-amber-700 transition-colors">
             <ArrowLeft className="h-5 w-5 mr-2" />
-            Continue Shopping
+            Back to Cart
           </button>
         </div>
       </div>
@@ -430,7 +454,7 @@ const CheckoutPage = () => {
                 
                 {/* Cart Items */}
                 <div className="space-y-4 mb-6">
-                  {cartItems.map((item) => (
+                  {checkoutItems.map((item) => (
                     <div key={item.id} className="flex gap-3">
                       <img
                         src={item.cover_image}
@@ -461,7 +485,7 @@ const CheckoutPage = () => {
                 <div className="border-t border-gray-200 dark:border-gray-700 pt-4 space-y-3">
                   <div className="flex justify-between text-gray-600 dark:text-gray-400">
                     <span>Subtotal</span>
-                    <span>${getCartTotal().toFixed(2)}</span>
+                    <span>${getCheckoutTotal().toFixed(2)}</span>
                   </div>
                   <div className="flex justify-between text-gray-600 dark:text-gray-400">
                     <span>Shipping</span>
@@ -469,12 +493,12 @@ const CheckoutPage = () => {
                   </div>
                   <div className="flex justify-between text-gray-600 dark:text-gray-400">
                     <span>Tax (10%)</span>
-                    <span>${(getCartTotal() * 0.1).toFixed(2)}</span>
+                    <span>${(getCheckoutTotal() * 0.1).toFixed(2)}</span>
                   </div>
                   <div className="border-t border-gray-200 dark:border-gray-700 pt-3">
                     <div className="flex justify-between text-lg font-semibold text-gray-800 dark:text-white">
                       <span>Total</span>
-                      <span>${(getCartTotal() + getCartTotal() * 0.1).toFixed(2)}</span>
+                      <span>${(getCheckoutTotal() + getCheckoutTotal() * 0.1).toFixed(2)}</span>
                     </div>
                   </div>
                 </div>
