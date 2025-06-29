@@ -24,6 +24,7 @@ import {
   UserCheck,
   Image,
   Settings,
+  User,
 } from "lucide-react";
 
 import BookManagement from "./BookManagement";
@@ -46,6 +47,8 @@ import BookEditPage from "./BookEditPage";
 import MediaLibrary from "./MediaLibrary";
 import BulkOperationReport from "./BulkOperationReport";
 import AttributeManagement from "./AttributeManagement";
+import AdminProfile from "./AdminProfile";
+import AdminSettings from "./AdminSettings";
 import AdminHeader from "../../components/admin/AdminHeader";
 
 const AdminDashboard = () => {
@@ -96,6 +99,10 @@ const AdminDashboard = () => {
       setActiveTab('media');
     } else if (path.startsWith('/admin/attributes')) {
       setActiveTab('attributes');
+    } else if (path.startsWith('/admin/profile')) {
+      setActiveTab('profile');
+    } else if (path.startsWith('/admin/settings')) {
+      setActiveTab('settings');
     } else if (path.startsWith('/admin/logs')) {
       setActiveTab('logs');
     }
@@ -161,6 +168,12 @@ const AdminDashboard = () => {
       case 'attributes':
         navigate('/admin/attributes');
         break;
+      case 'profile':
+        navigate('/admin/profile');
+        break;
+      case 'settings':
+        navigate('/admin/settings');
+        break;
       case 'logs':
         navigate('/admin/logs');
         break;
@@ -189,6 +202,8 @@ const AdminDashboard = () => {
     { id: "security", label: "Security", icon: <Shield size={20} /> },
     { id: "content", label: "Content", icon: <FileText size={20} /> },
     { id: "media", label: "Media Library", icon: <Image size={20} /> },
+    { id: "profile", label: "Profile", icon: <User size={20} /> },
+    { id: "settings", label: "Settings", icon: <Settings size={20} /> },
     { id: "logs", label: "System Logs", icon: <Activity size={20} /> },
   ];
 
@@ -305,6 +320,8 @@ const AdminDashboard = () => {
             <Route path="/security" element={<SecurityAudit />} />
             <Route path="/content" element={<ContentManagement />} />
             <Route path="/media" element={<MediaLibrary />} />
+            <Route path="/profile" element={<AdminProfile />} />
+            <Route path="/settings" element={<AdminSettings />} />
             <Route path="/logs" element={<LogManagement />} />
           </Routes>
         </main>
