@@ -168,6 +168,11 @@ export const CartProvider = ({ children }) => {
       .reduce((total, item) => total + item.quantity, 0);
   };
 
+  // Add the missing getItemCount function - alias for getCartItemsCount
+  const getItemCount = () => {
+    return getCartItemsCount();
+  };
+
   const value = {
     cartItems,
     selectedItems,
@@ -184,6 +189,7 @@ export const CartProvider = ({ children }) => {
     getSelectedItems,
     getCartItemsCount,
     getSelectedItemsCount,
+    getItemCount, // Add the missing function to the context value
   };
 
   return (
