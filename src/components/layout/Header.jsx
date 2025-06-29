@@ -18,7 +18,6 @@ import { useCart } from "../../contexts/CartContext";
 import { useLanguage } from "../../contexts/LanguageContext";
 import LanguageSwitcher from "../common/LanguageSwitcher";
 import NotificationDropdown from "../common/NotificationDropdown";
-import CartDropdown from "../common/CartDropdown";
 import UserProfileDropdown from "../common/UserProfileDropdown";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -68,9 +67,6 @@ const Header = () => {
       mediaQuery.removeEventListener("change", handleThemeChange);
     };
   }, [darkMode]);
-
-  // Handle click outside cart dropdown
-
 
   const toggleDarkMode = () => {
     const newDarkMode = !darkMode;
@@ -141,7 +137,7 @@ const Header = () => {
                     ? "text-amber-600 dark:text-amber-500"
                     : "text-gray-700 dark:text-gray-300"
                 }`}>
-                {t("home.bestsellers")}
+                Recommendations
               </Link>
             </nav>
 
@@ -270,7 +266,7 @@ const Header = () => {
                       : "text-gray-700 dark:text-gray-300"
                   }`}
                   onClick={() => setIsMenuOpen(false)}>
-                  {t("home.bestsellers")}
+                  Recommendations
                 </Link>
 
                 <div className="flex justify-between items-center pt-2 border-t border-gray-200 dark:border-gray-700">
