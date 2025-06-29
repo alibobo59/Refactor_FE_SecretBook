@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useAuth } from './AuthContext';
 import { useCart } from './CartContext';
 import { useNotification } from './NotificationContext';
+import { useToast } from './ToastContext';
 
 const OrderContext = createContext();
 
@@ -13,6 +14,7 @@ export const OrderProvider = ({ children }) => {
   const { user } = useAuth();
   const { clearCart } = useCart();
   const { notifyOrderPlaced, notifyOrderConfirmed, notifyOrderShipped, notifyOrderDelivered, notifyNewOrder } = useNotification();
+  const toast = useToast();
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -72,15 +74,28 @@ export const OrderProvider = ({ children }) => {
       // Send notifications
       notifyOrderPlaced(newOrder.id);
       
+      // Show success toast
+      if (toast) {
+        toast.showOrderCreated(newOrder.id);
+      }
+      
       // Notify admin about new order (simulate admin notification)
-      if (user.isAdmin !== true) {
-        // In a real app, this would be sent to all admin users
-        notifyNewOrder(newOrder.id, newOrder.customerName);
+      if (user.isAdmin !== true && toast) {
+        toast.showAdminNewOrder(newOrder.id, newOrder.customerName, newOrder.total);
       }
       
       return newOrder;
     } catch (error) {
       setError('Failed to create order');
+      
+      // Show error toast
+      if (toast) {
+        toast.showError(
+          'Order Failed',
+          'Unable to place your order. Please try again.'
+        );
+      }
+      
       throw error;
     } finally {
       setLoading(false);
@@ -110,12 +125,35 @@ export const OrderProvider = ({ children }) => {
             switch (newStatus) {
               case 'confirmed':
                 notifyOrderConfirmed(orderId);
+                if (toast) {
+                  toast.showSuccess(
+                    'Order Confirmed',
+                    `Order ${orderId} has been confirmed and is being processed.`
+                  );
+                }
                 break;
               case 'shipped':
                 notifyOrderShipped(orderId);
+                if (toast) {
+                  toast.showInfo(
+                    'Order Shipped',
+                    `Order ${orderId} has been shipped and is on its way.`
+                  );
+                }
                 break;
               case 'delivered':
                 notifyOrderDelivered(orderId);
+                if (toast) {
+                  toast.showSuccess(
+                    'Order Delivered',
+                    `Order ${orderId} has been delivered successfully.`
+                  );
+                }
+                break;
+              case 'cancelled':
+                if (toast) {
+                  toast.showOrderCancelled(orderId);
+                }
                 break;
             }
 
@@ -128,6 +166,15 @@ export const OrderProvider = ({ children }) => {
       return true;
     } catch (error) {
       setError('Failed to update order status');
+      
+      // Show error toast
+      if (toast) {
+        toast.showError(
+          'Update Failed',
+          'Unable to update order status. Please try again.'
+        );
+      }
+      
       throw error;
     } finally {
       setLoading(false);

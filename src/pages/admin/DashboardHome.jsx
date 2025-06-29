@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import { BookOpen, Tag, AlertCircle, DollarSign } from "lucide-react";
 import { StatCard, Table } from "../../components/admin";
 import { useNotification } from "../../contexts/NotificationContext";
+import { useToast } from "../../contexts/ToastContext";
 import NotificationTestPanel from "../../components/admin/NotificationTestPanel";
 
 /**
@@ -9,6 +10,7 @@ import NotificationTestPanel from "../../components/admin/NotificationTestPanel"
  */
 const DashboardHome = ({ books, categories }) => {
   const { notifyLowStock } = useNotification();
+  const toast = useToast();
 
   // Calculate statistics
   const totalBooks = books.length;
@@ -32,10 +34,16 @@ const DashboardHome = ({ books, categories }) => {
       
       if (!lastNotified || (now - parseInt(lastNotified)) > oneDay) {
         notifyLowStock(book.title, book.stock);
+        
+        // Also show admin toast for low stock
+        if (toast) {
+          toast.showAdminLowStock(book.title, book.stock);
+        }
+        
         localStorage.setItem(`lowStock_${book.id}`, now.toString());
       }
     });
-  }, [books, notifyLowStock]);
+  }, [books, notifyLowStock, toast]);
 
   // Define columns for the low stock books table
   const columns = [

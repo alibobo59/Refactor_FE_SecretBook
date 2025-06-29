@@ -8,7 +8,9 @@ import { OrderProvider } from "./contexts/OrderContext";
 import { NotificationProvider } from "./contexts/NotificationContext";
 import { RecommendationProvider } from "./contexts/RecommendationContext";
 import { LogProvider } from "./contexts/LogContext";
+import { ToastProvider } from "./contexts/ToastContext";
 import LanguageProvider from "./contexts/LanguageContext";
+import ToastContainer from "./components/common/ToastContainer";
 import ReactDOM from "react-dom/client";
 import React from "react";
 import { BrowserRouter } from "react-router-dom";
@@ -19,21 +21,24 @@ root.render(
     <BrowserRouter>
       <LanguageProvider>
         <AuthProvider>
-          <LogProvider>
-            <NotificationProvider>
-              <BookProvider>
-                <CartProvider>
-                  <OrderProvider>
-                    <ReviewProvider>
-                      <RecommendationProvider>
-                        <App />
-                      </RecommendationProvider>
-                    </ReviewProvider>
-                  </OrderProvider>
-                </CartProvider>
-              </BookProvider>
-            </NotificationProvider>
-          </LogProvider>
+          <ToastProvider>
+            <LogProvider>
+              <NotificationProvider>
+                <BookProvider>
+                  <CartProvider>
+                    <OrderProvider>
+                      <ReviewProvider>
+                        <RecommendationProvider>
+                          <App />
+                          <ToastContainer />
+                        </RecommendationProvider>
+                      </ReviewProvider>
+                    </OrderProvider>
+                  </CartProvider>
+                </BookProvider>
+              </NotificationProvider>
+            </LogProvider>
+          </ToastProvider>
         </AuthProvider>
       </LanguageProvider>
     </BrowserRouter>

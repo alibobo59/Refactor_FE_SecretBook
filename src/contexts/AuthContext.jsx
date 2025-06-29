@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import axios from 'axios';
+import { useToast } from './ToastContext';
 
 const AuthContext = createContext();
 
@@ -11,6 +12,7 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const toast = useToast();
 
   // Check if user is already logged in (from localStorage)
   useEffect(() => {
@@ -44,9 +46,24 @@ export const AuthProvider = ({ children }) => {
       axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
       
       setUser(user);
+      
+      // Show success toast
+      if (toast) {
+        toast.showLoginSuccess(user.name);
+      }
+      
       return user;
     } catch (error) {
       setError(error.message || 'Failed to login');
+      
+      // Show error toast
+      if (toast) {
+        toast.showError(
+          'Login Failed',
+          error.message || 'Invalid email or password. Please try again.'
+        );
+      }
+      
       throw error;
     } finally {
       setLoading(false);
@@ -72,9 +89,38 @@ export const AuthProvider = ({ children }) => {
       axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
       
       setUser(user);
+      
+      // Show success toast
+      if (toast) {
+        toast.showSuccess(
+          'Welcome to Secret Bookstore!',
+          `Account created successfully. Welcome aboard, ${user.name}!`,
+          {
+            action: {
+              label: 'Explore Books',
+              onClick: () => window.location.href = '/books',
+            },
+          }
+        );
+      }
+      
+      // Notify admin about new user registration
+      if (toast && !user.isAdmin) {
+        toast.showAdminUserRegistered(user.email);
+      }
+      
       return user;
     } catch (error) {
       setError(error.message || 'Failed to register');
+      
+      // Show error toast
+      if (toast) {
+        toast.showError(
+          'Registration Failed',
+          error.message || 'Unable to create account. Please try again.'
+        );
+      }
+      
       throw error;
     } finally {
       setLoading(false);
@@ -88,6 +134,11 @@ export const AuthProvider = ({ children }) => {
     
     // Remove axios default authorization header
     delete axios.defaults.headers.common['Authorization'];
+    
+    // Show logout toast
+    if (toast) {
+      toast.showLogoutSuccess();
+    }
     
     // Clear user state
     setUser(null);

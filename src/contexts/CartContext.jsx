@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useAuth } from './AuthContext';
+import { useToast } from './ToastContext';
 
 const CartContext = createContext();
 
@@ -11,6 +12,7 @@ export const CartProvider = ({ children }) => {
   const [cartItems, setCartItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const { user } = useAuth();
+  const toast = useToast();
 
   // Load cart from localStorage when component mounts or user changes
   useEffect(() => {
@@ -49,10 +51,32 @@ export const CartProvider = ({ children }) => {
           ...updatedItems[existingItemIndex],
           quantity: updatedItems[existingItemIndex].quantity + quantity
         };
+        
+        // Show toast for quantity update
+        if (toast) {
+          toast.showInfo(
+            'Cart updated',
+            `"${book.title}" quantity updated in your cart.`,
+            {
+              action: {
+                label: 'View Cart',
+                onClick: () => window.location.href = '/checkout',
+              },
+            }
+          );
+        }
+        
         return updatedItems;
       } else {
         // Add new item to cart
-        return [...prevItems, { ...book, quantity }];
+        const newItems = [...prevItems, { ...book, quantity }];
+        
+        // Show toast for new item
+        if (toast) {
+          toast.showItemAddedToCart(book.title);
+        }
+        
+        return newItems;
       }
     });
   };
@@ -71,11 +95,29 @@ export const CartProvider = ({ children }) => {
   };
 
   const removeFromCart = (bookId) => {
-    setCartItems(prevItems => prevItems.filter(item => item.id !== bookId));
+    setCartItems(prevItems => {
+      const itemToRemove = prevItems.find(item => item.id === bookId);
+      const newItems = prevItems.filter(item => item.id !== bookId);
+      
+      // Show toast for item removal
+      if (toast && itemToRemove) {
+        toast.showItemRemovedFromCart(itemToRemove.title);
+      }
+      
+      return newItems;
+    });
   };
 
   const clearCart = () => {
     setCartItems([]);
+    
+    // Show toast for cart clear
+    if (toast) {
+      toast.showInfo(
+        'Cart cleared',
+        'All items have been removed from your cart.'
+      );
+    }
   };
 
   const getCartTotal = () => {
