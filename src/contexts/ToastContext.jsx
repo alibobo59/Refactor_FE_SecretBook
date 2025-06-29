@@ -1,32 +1,30 @@
 import React, { createContext, useContext, useState, useCallback } from 'react';
-import { useAuth } from './AuthContext';
 
 const ToastContext = createContext();
 
 export const useToast = () => {
   const context = useContext(ToastContext);
   if (!context) {
-    throw new Error('useToast must be used within a ToastProvider');
+    // Return null instead of throwing error to prevent crashes during initialization
+    return null;
   }
   return context;
 };
 
 export const ToastProvider = ({ children }) => {
-  const { user } = useAuth();
   const [toasts, setToasts] = useState([]);
 
   const addToast = useCallback((toast) => {
     const id = Date.now() + Math.random();
-    const isAdmin = user?.isAdmin || false;
     
     const newToast = {
       id,
       type: toast.type || 'info', // success, error, warning, info
       title: toast.title,
       message: toast.message,
-      duration: toast.duration || (isAdmin && toast.type === 'error' ? 5000 : 3000),
+      duration: toast.duration || (toast.type === 'error' ? 5000 : 3000),
       action: toast.action || null, // { label: 'View Order', onClick: () => {} }
-      isAdmin,
+      isAdmin: toast.isAdmin || false,
       timestamp: new Date().toISOString(),
       ...toast,
     };
@@ -41,7 +39,7 @@ export const ToastProvider = ({ children }) => {
     }
 
     return id;
-  }, [user]);
+  }, []);
 
   const removeToast = useCallback((id) => {
     setToasts(prev => prev.filter(toast => toast.id !== id));
@@ -97,11 +95,11 @@ export const ToastProvider = ({ children }) => {
       {
         action: {
           label: 'View Profile',
-          onClick: () => window.location.href = `/profile/${user?.username}`,
+          onClick: () => window.location.href = `/profile/${userName}`,
         },
       }
     );
-  }, [showSuccess, user]);
+  }, [showSuccess]);
 
   const showLogoutSuccess = useCallback(() => {
     return showInfo(
@@ -157,6 +155,7 @@ export const ToastProvider = ({ children }) => {
       title: 'New Order Received',
       message: `Order #${orderId} from ${customerName} - $${amount.toFixed(2)}`,
       duration: 5000, // Longer for admin notifications
+      isAdmin: true,
       action: {
         label: 'Manage Order',
         onClick: () => window.location.href = '/admin/orders',
@@ -170,6 +169,7 @@ export const ToastProvider = ({ children }) => {
       title: 'Low Stock Alert',
       message: `"${bookTitle}" - Only ${stock} items remaining`,
       duration: 0, // Persistent until manually dismissed
+      isAdmin: true,
       action: {
         label: 'Manage Inventory',
         onClick: () => window.location.href = '/admin/books',
@@ -182,6 +182,7 @@ export const ToastProvider = ({ children }) => {
       type: 'success',
       title: 'New User Registered',
       message: `${userEmail} has joined the platform`,
+      isAdmin: true,
       action: {
         label: 'View Users',
         onClick: () => window.location.href = '/admin/users',
@@ -195,6 +196,7 @@ export const ToastProvider = ({ children }) => {
       title: 'System Error',
       message: `${error}${details ? ` - ${details}` : ''}`,
       duration: 0, // Persistent for critical errors
+      isAdmin: true,
     });
   }, [addToast]);
 

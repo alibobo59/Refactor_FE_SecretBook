@@ -20,8 +20,8 @@ root.render(
   <React.StrictMode>
     <BrowserRouter>
       <LanguageProvider>
-        <AuthProvider>
-          <ToastProvider>
+        <ToastProvider>
+          <AuthProvider>
             <LogProvider>
               <NotificationProvider>
                 <BookProvider>
@@ -38,8 +38,8 @@ root.render(
                 </BookProvider>
               </NotificationProvider>
             </LogProvider>
-          </ToastProvider>
-        </AuthProvider>
+          </AuthProvider>
+        </ToastProvider>
       </LanguageProvider>
     </BrowserRouter>
   </React.StrictMode>

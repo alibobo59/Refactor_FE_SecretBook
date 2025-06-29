@@ -5,7 +5,14 @@ import { useToast } from '../../contexts/ToastContext';
 import Toast from './Toast';
 
 const ToastContainer = () => {
-  const { toasts, removeToast } = useToast();
+  const toastContext = useToast();
+  
+  // Return null if toast context is not available
+  if (!toastContext) {
+    return null;
+  }
+
+  const { toasts, removeToast } = toastContext;
 
   // Create portal to render toasts outside the normal component tree
   const toastRoot = document.getElementById('toast-root') || document.body;
