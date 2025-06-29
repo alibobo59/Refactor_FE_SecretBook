@@ -49,10 +49,10 @@ const BookDetailPage = () => {
             The book you're looking for doesn't exist.
           </p>
           <button
-            onClick={() => navigate('/admin')}
+            onClick={() => navigate('/admin/books')}
             className="px-4 py-2 bg-amber-600 text-white rounded-md hover:bg-amber-700"
           >
-            Back to Dashboard
+            Back to Books
           </button>
         </div>
       </div>
@@ -103,7 +103,7 @@ const BookDetailPage = () => {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
           <button
-            onClick={() => navigate('/admin')}
+            onClick={() => navigate('/admin/books')}
             className="p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
           >
             <ArrowLeft className="h-5 w-5" />
@@ -129,7 +129,7 @@ const BookDetailPage = () => {
             onClick={() => {
               if (window.confirm('Are you sure you want to delete this book?')) {
                 // Handle delete
-                navigate('/admin');
+                navigate('/admin/books');
               }
             }}
             className="flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors"

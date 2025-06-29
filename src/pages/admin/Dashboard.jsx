@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate, Routes, Route } from "react-router-dom";
+import { useNavigate, Routes, Route, useLocation } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
 import { useBook } from "../../contexts/BookContext";
 import {
@@ -50,6 +50,7 @@ const AdminDashboard = () => {
   const { user, logout } = useAuth();
   const { books, categories } = useBook();
   const navigate = useNavigate();
+  const location = useLocation();
   const [activeTab, setActiveTab] = useState("dashboard");
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
@@ -60,6 +61,42 @@ const AdminDashboard = () => {
     }
   }, [user, navigate]);
 
+  // Update active tab based on current route
+  useEffect(() => {
+    const path = location.pathname;
+    if (path === '/admin' || path === '/admin/') {
+      setActiveTab('dashboard');
+    } else if (path.startsWith('/admin/books')) {
+      setActiveTab('books');
+    } else if (path.startsWith('/admin/categories')) {
+      setActiveTab('categories');
+    } else if (path.startsWith('/admin/authors')) {
+      setActiveTab('authors');
+    } else if (path.startsWith('/admin/publishers')) {
+      setActiveTab('publishers');
+    } else if (path.startsWith('/admin/users')) {
+      setActiveTab('users');
+    } else if (path.startsWith('/admin/enhanced-users')) {
+      setActiveTab('enhanced-users');
+    } else if (path.startsWith('/admin/orders')) {
+      setActiveTab('orders');
+    } else if (path.startsWith('/admin/analytics')) {
+      setActiveTab('analytics');
+    } else if (path.startsWith('/admin/marketing')) {
+      setActiveTab('marketing');
+    } else if (path.startsWith('/admin/bulk-ops')) {
+      setActiveTab('bulk-ops');
+    } else if (path.startsWith('/admin/security')) {
+      setActiveTab('security');
+    } else if (path.startsWith('/admin/content')) {
+      setActiveTab('content');
+    } else if (path.startsWith('/admin/media')) {
+      setActiveTab('media');
+    } else if (path.startsWith('/admin/logs')) {
+      setActiveTab('logs');
+    }
+  }, [location.pathname]);
+
   const handleLogout = () => {
     logout();
     navigate("/login");
@@ -67,6 +104,62 @@ const AdminDashboard = () => {
 
   const toggleSidebar = () => {
     setIsSidebarCollapsed(!isSidebarCollapsed);
+  };
+
+  const handleNavClick = (itemId) => {
+    setActiveTab(itemId);
+    setIsMobileMenuOpen(false);
+    
+    // Navigate to the appropriate route
+    switch (itemId) {
+      case 'dashboard':
+        navigate('/admin');
+        break;
+      case 'books':
+        navigate('/admin/books');
+        break;
+      case 'categories':
+        navigate('/admin/categories');
+        break;
+      case 'authors':
+        navigate('/admin/authors');
+        break;
+      case 'publishers':
+        navigate('/admin/publishers');
+        break;
+      case 'users':
+        navigate('/admin/users');
+        break;
+      case 'enhanced-users':
+        navigate('/admin/enhanced-users');
+        break;
+      case 'orders':
+        navigate('/admin/orders');
+        break;
+      case 'analytics':
+        navigate('/admin/analytics');
+        break;
+      case 'marketing':
+        navigate('/admin/marketing');
+        break;
+      case 'bulk-ops':
+        navigate('/admin/bulk-ops');
+        break;
+      case 'security':
+        navigate('/admin/security');
+        break;
+      case 'content':
+        navigate('/admin/content');
+        break;
+      case 'media':
+        navigate('/admin/media');
+        break;
+      case 'logs':
+        navigate('/admin/logs');
+        break;
+      default:
+        navigate('/admin');
+    }
   };
 
   const navItems = [
@@ -121,10 +214,7 @@ const AdminDashboard = () => {
                   ? "bg-amber-100 dark:bg-amber-900 text-amber-600 dark:text-amber-400 border-r-4 border-amber-600"
                   : "text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700"
               }`}
-              onClick={() => {
-                setActiveTab(item.id);
-                setIsMobileMenuOpen(false);
-              }}>
+              onClick={() => handleNavClick(item.id)}>
               <span className={isSidebarCollapsed ? "" : "mr-3"}>
                 {item.icon}
               </span>
@@ -179,33 +269,34 @@ const AdminDashboard = () => {
         {/* Content Area */}
         <main className="p-6 mt-2 md:mt-0 md:pt-16 flex-1 overflow-auto">
           <Routes>
+            {/* Dashboard Home */}
             <Route path="/" element={
-              <>
-                {activeTab === "dashboard" && (
-                  <DashboardHome books={books} categories={categories} />
-                )}
-                {activeTab === "books" && (
-                  <BookManagement books={books} categories={categories} />
-                )}
-                {activeTab === "categories" && <CategoryManagement />}
-                {activeTab === "authors" && <AuthorManagement />}
-                {activeTab === "publishers" && <PublisherManagement />}
-                {activeTab === "users" && <UserManagement />}
-                {activeTab === "enhanced-users" && <EnhancedUserManagement />}
-                {activeTab === "orders" && <OrderManagement />}
-                {activeTab === "analytics" && <AnalyticsDashboard />}
-                {activeTab === "marketing" && <MarketingManagement />}
-                {activeTab === "bulk-ops" && <BulkOperations />}
-                {activeTab === "security" && <SecurityAudit />}
-                {activeTab === "content" && <ContentManagement />}
-                {activeTab === "media" && <MediaLibrary />}
-                {activeTab === "logs" && <LogManagement />}
-              </>
+              <DashboardHome books={books} categories={categories} />
+            } />
+            
+            {/* Books Routes */}
+            <Route path="/books" element={
+              <BookManagement books={books} categories={categories} />
             } />
             <Route path="/books/create" element={<BookCreatePage />} />
             <Route path="/books/:id" element={<BookDetailPage />} />
             <Route path="/books/:id/edit" element={<BookEditPage />} />
-            <Route path="/bulk-operations/:operationId/report" element={<BulkOperationReport />} />
+            
+            {/* Other Admin Routes */}
+            <Route path="/categories" element={<CategoryManagement />} />
+            <Route path="/authors" element={<AuthorManagement />} />
+            <Route path="/publishers" element={<PublisherManagement />} />
+            <Route path="/users" element={<UserManagement />} />
+            <Route path="/enhanced-users" element={<EnhancedUserManagement />} />
+            <Route path="/orders" element={<OrderManagement />} />
+            <Route path="/analytics" element={<AnalyticsDashboard />} />
+            <Route path="/marketing" element={<MarketingManagement />} />
+            <Route path="/bulk-ops" element={<BulkOperations />} />
+            <Route path="/bulk-ops/:operationId/report" element={<BulkOperationReport />} />
+            <Route path="/security" element={<SecurityAudit />} />
+            <Route path="/content" element={<ContentManagement />} />
+            <Route path="/media" element={<MediaLibrary />} />
+            <Route path="/logs" element={<LogManagement />} />
           </Routes>
         </main>
       </div>
