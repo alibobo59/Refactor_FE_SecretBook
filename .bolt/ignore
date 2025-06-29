@@ -1,14 +1,14 @@
-# Hide all client-side pages
+# Hide client-side pages
 src/pages/client/
 
-# Hide client-side specific components
+# Hide client-side specific components (keep admin components visible)
 src/components/books/
 src/components/common/
 src/components/layout/
 src/components/recommendations/
 src/components/reviews/
 
-# Hide client-side contexts (keep admin-related ones visible)
+# Hide client-side contexts (keep admin-related contexts visible)
 src/contexts/AuthContext.jsx
 src/contexts/BookContext.jsx
 src/contexts/CartContext.jsx
@@ -17,30 +17,16 @@ src/contexts/RecommendationContext.jsx
 src/contexts/ReviewContext.jsx
 src/contexts/ToastContext.jsx
 
-# Hide translations (client-side internationalization)
+# Hide translation files
 src/translations/
-
-# Hide main client app entry point
-src/main.jsx
-
-# Hide client-side routing in App.jsx
-src/App.jsx
-
-# Keep only admin-related files visible:
-# - src/pages/admin/ (admin pages)
-# - src/components/admin/ (admin components) 
-# - Admin-related contexts like:
-#   - src/contexts/AnalyticsContext.jsx
-#   - src/contexts/ContentContext.jsx
-#   - src/contexts/LogContext.jsx
-#   - src/contexts/MarketingContext.jsx
-#   - src/contexts/NotificationContext.jsx
-#   - src/contexts/OrderContext.jsx
-#   - src/contexts/SecurityContext.jsx
 
 # Hide client-side styling
 src/index.css
 
-# Hide client-side config files that aren't needed for admin development
-tailwind.config.js
-postcss.config.js
+# Keep these VISIBLE and important:
+# - src/App.jsx (main app component)
+# - src/main.jsx (app entry point)
+# - All admin pages (src/pages/admin/)
+# - All admin components (src/components/admin/)
+# - Admin contexts (Analytics, Content, Log, Marketing, Notification, Order, Security)
+# - Config files (package.json, vite.config.ts, etc.)
