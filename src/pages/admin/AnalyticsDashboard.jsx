@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAnalytics } from '../../contexts/AnalyticsContext';
 import { PageHeader, StatCard } from '../../components/admin';
+import { LineChart, BarChart, DoughnutChart } from '../../components/charts';
 import {
   TrendingUp,
   DollarSign,
@@ -12,6 +13,10 @@ import {
   BarChart3,
   PieChart,
   Activity,
+  Eye,
+  MousePointer,
+  Package,
+  Globe,
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 
@@ -53,6 +58,63 @@ const AnalyticsDashboard = () => {
   }
 
   const { sales, users, inventory, performance } = analytics;
+
+  // Prepare chart data
+  const revenueChartData = {
+    labels: sales.dailySales?.map(day => 
+      new Date(day.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+    ) || [],
+    values: sales.dailySales?.map(day => day.revenue) || [],
+    label: 'Daily Revenue'
+  };
+
+  const ordersChartData = {
+    labels: sales.dailySales?.map(day => 
+      new Date(day.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+    ) || [],
+    values: sales.dailySales?.map(day => day.orders) || [],
+    label: 'Daily Orders'
+  };
+
+  const monthlyRevenueData = {
+    labels: sales.monthlySales?.map(month => 
+      new Date(month.month + '-01').toLocaleDateString('en-US', { month: 'short', year: 'numeric' })
+    ) || [],
+    values: sales.monthlySales?.map(month => month.revenue) || [],
+    label: 'Monthly Revenue'
+  };
+
+  const topProductsData = {
+    labels: sales.topProducts?.map(product => product.title) || [],
+    values: sales.topProducts?.map(product => product.revenue) || [],
+    label: 'Revenue by Product'
+  };
+
+  const categoryPerformanceData = {
+    labels: sales.categoryPerformance?.map(cat => cat.category) || [],
+    values: sales.categoryPerformance?.map(cat => cat.revenue) || [],
+    label: 'Revenue by Category'
+  };
+
+  const userSegmentsData = {
+    labels: users.userSegments?.map(segment => segment.segment) || [],
+    values: users.userSegments?.map(segment => segment.count) || [],
+    label: 'User Distribution'
+  };
+
+  const deviceBreakdownData = {
+    labels: performance.deviceBreakdown?.map(device => device.device) || [],
+    values: performance.deviceBreakdown?.map(device => device.sessions) || [],
+    label: 'Sessions by Device'
+  };
+
+  const userRegistrationsData = {
+    labels: users.userRegistrations?.slice(-14).map(day => 
+      new Date(day.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+    ) || [],
+    values: users.userRegistrations?.slice(-14).map(day => day.registrations) || [],
+    label: 'Daily Registrations'
+  };
 
   return (
     <div className="space-y-6">
@@ -113,9 +175,9 @@ const AnalyticsDashboard = () => {
         />
       </div>
 
-      {/* Charts Section */}
+      {/* Main Charts Section */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Revenue Chart */}
+        {/* Revenue Trend Chart */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -123,7 +185,7 @@ const AnalyticsDashboard = () => {
         >
           <div className="flex justify-between items-center mb-6">
             <h3 className="text-lg font-semibold text-gray-800 dark:text-white">
-              Revenue Trend
+              Revenue Trend (Last 30 Days)
             </h3>
             <button
               onClick={() => handleExport('sales')}
@@ -134,63 +196,47 @@ const AnalyticsDashboard = () => {
             </button>
           </div>
           
-          {/* Simple chart representation */}
-          <div className="space-y-3">
-            {sales.dailySales?.slice(-7).map((day, index) => (
-              <div key={day.date} className="flex items-center gap-3">
-                <span className="text-sm text-gray-600 dark:text-gray-400 w-20">
-                  {new Date(day.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
-                </span>
-                <div className="flex-1 bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-                  <div
-                    className="bg-green-500 h-2 rounded-full transition-all duration-500"
-                    style={{ width: `${(day.revenue / 5000) * 100}%` }}
-                  />
-                </div>
-                <span className="text-sm font-medium text-gray-800 dark:text-white w-16 text-right">
-                  ${day.revenue.toLocaleString()}
-                </span>
-              </div>
-            ))}
-          </div>
+          <LineChart
+            data={revenueChartData}
+            height={350}
+            fill={true}
+            color="#10b981"
+            backgroundColor="rgba(16, 185, 129, 0.1)"
+            showLegend={false}
+          />
         </motion.div>
 
-        {/* Top Products */}
+        {/* Orders Trend Chart */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
           className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6"
         >
-          <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-6">
-            Top Selling Products
-          </h3>
-          <div className="space-y-4">
-            {sales.topProducts?.map((product, index) => (
-              <div key={product.id} className="flex items-center gap-3">
-                <span className="w-6 h-6 bg-amber-100 dark:bg-amber-900 text-amber-600 dark:text-amber-400 rounded-full flex items-center justify-center text-sm font-medium">
-                  {index + 1}
-                </span>
-                <div className="flex-1">
-                  <p className="font-medium text-gray-800 dark:text-white text-sm">
-                    {product.title}
-                  </p>
-                  <p className="text-xs text-gray-600 dark:text-gray-400">
-                    {product.sales} sales
-                  </p>
-                </div>
-                <span className="text-sm font-medium text-gray-800 dark:text-white">
-                  ${product.revenue.toFixed(2)}
-                </span>
-              </div>
-            ))}
+          <div className="flex justify-between items-center mb-6">
+            <h3 className="text-lg font-semibold text-gray-800 dark:text-white">
+              Orders Trend (Last 30 Days)
+            </h3>
+            <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+              <ShoppingCart className="h-4 w-4" />
+              {sales.totalOrders} total
+            </div>
           </div>
+          
+          <LineChart
+            data={ordersChartData}
+            height={350}
+            fill={true}
+            color="#3b82f6"
+            backgroundColor="rgba(59, 130, 246, 0.1)"
+            showLegend={false}
+          />
         </motion.div>
       </div>
 
-      {/* User Analytics */}
+      {/* Secondary Charts */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* User Growth */}
+        {/* Top Products */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -198,31 +244,19 @@ const AnalyticsDashboard = () => {
           className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6"
         >
           <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-6">
-            User Growth
+            Top Products by Revenue
           </h3>
-          <div className="space-y-4">
-            <div className="flex justify-between items-center">
-              <span className="text-gray-600 dark:text-gray-400">Active Users</span>
-              <span className="font-semibold text-gray-800 dark:text-white">
-                {users.activeUsers?.toLocaleString()}
-              </span>
-            </div>
-            <div className="flex justify-between items-center">
-              <span className="text-gray-600 dark:text-gray-400">New Users</span>
-              <span className="font-semibold text-gray-800 dark:text-white">
-                {users.newUsers?.toLocaleString()}
-              </span>
-            </div>
-            <div className="flex justify-between items-center">
-              <span className="text-gray-600 dark:text-gray-400">Growth Rate</span>
-              <span className="font-semibold text-green-600">
-                +{users.userGrowth}%
-              </span>
-            </div>
-          </div>
+          
+          <BarChart
+            data={topProductsData}
+            height={300}
+            horizontal={true}
+            showLegend={false}
+            colors={['#f59e0b']}
+          />
         </motion.div>
 
-        {/* User Segments */}
+        {/* Category Performance */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -230,35 +264,18 @@ const AnalyticsDashboard = () => {
           className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6"
         >
           <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-6">
-            User Segments
+            Revenue by Category
           </h3>
-          <div className="space-y-3">
-            {users.userSegments?.map((segment, index) => (
-              <div key={segment.segment} className="space-y-2">
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-600 dark:text-gray-400">
-                    {segment.segment}
-                  </span>
-                  <span className="text-sm font-medium text-gray-800 dark:text-white">
-                    {segment.percentage}%
-                  </span>
-                </div>
-                <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-                  <div
-                    className={`h-2 rounded-full transition-all duration-500 ${
-                      index === 0 ? 'bg-blue-500' :
-                      index === 1 ? 'bg-green-500' :
-                      index === 2 ? 'bg-purple-500' : 'bg-gray-500'
-                    }`}
-                    style={{ width: `${segment.percentage}%` }}
-                  />
-                </div>
-              </div>
-            ))}
-          </div>
+          
+          <DoughnutChart
+            data={categoryPerformanceData}
+            height={300}
+            showLegend={true}
+            colors={['#f59e0b', '#3b82f6', '#10b981', '#ef4444']}
+          />
         </motion.div>
 
-        {/* Performance Metrics */}
+        {/* User Segments */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -266,85 +283,154 @@ const AnalyticsDashboard = () => {
           className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6"
         >
           <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-6">
+            User Segments
+          </h3>
+          
+          <DoughnutChart
+            data={userSegmentsData}
+            height={300}
+            showLegend={true}
+            colors={['#8b5cf6', '#06b6d4', '#f97316', '#ef4444']}
+          />
+        </motion.div>
+      </div>
+
+      {/* Additional Analytics */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Monthly Revenue Trend */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.5 }}
+          className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6"
+        >
+          <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-6">
+            Monthly Revenue Trend
+          </h3>
+          
+          <BarChart
+            data={monthlyRevenueData}
+            height={300}
+            showLegend={false}
+            colors={['#10b981']}
+          />
+        </motion.div>
+
+        {/* User Registrations */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.6 }}
+          className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6"
+        >
+          <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-6">
+            User Registrations (Last 14 Days)
+          </h3>
+          
+          <LineChart
+            data={userRegistrationsData}
+            height={300}
+            fill={true}
+            color="#8b5cf6"
+            backgroundColor="rgba(139, 92, 246, 0.1)"
+            showLegend={false}
+          />
+        </motion.div>
+      </div>
+
+      {/* Performance Metrics */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Device Breakdown */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.7 }}
+          className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6"
+        >
+          <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-6">
+            Sessions by Device
+          </h3>
+          
+          <DoughnutChart
+            data={deviceBreakdownData}
+            height={300}
+            showLegend={true}
+            colors={['#3b82f6', '#10b981', '#f59e0b']}
+          />
+        </motion.div>
+
+        {/* Performance Summary */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.8 }}
+          className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6"
+        >
+          <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-6">
             Site Performance
           </h3>
-          <div className="space-y-4">
-            <div className="flex justify-between items-center">
-              <span className="text-gray-600 dark:text-gray-400">Page Views</span>
-              <span className="font-semibold text-gray-800 dark:text-white">
-                {performance.pageViews?.toLocaleString()}
-              </span>
+          
+          <div className="space-y-6">
+            <div className="grid grid-cols-2 gap-4">
+              <div className="text-center p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+                <div className="flex items-center justify-center gap-2 mb-2">
+                  <Eye className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+                  <span className="text-sm font-medium text-blue-700 dark:text-blue-300">
+                    Page Views
+                  </span>
+                </div>
+                <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">
+                  {performance.pageViews?.toLocaleString()}
+                </p>
+              </div>
+              
+              <div className="text-center p-4 bg-green-50 dark:bg-green-900/20 rounded-lg">
+                <div className="flex items-center justify-center gap-2 mb-2">
+                  <Users className="h-5 w-5 text-green-600 dark:text-green-400" />
+                  <span className="text-sm font-medium text-green-700 dark:text-green-300">
+                    Unique Visitors
+                  </span>
+                </div>
+                <p className="text-2xl font-bold text-green-600 dark:text-green-400">
+                  {performance.uniqueVisitors?.toLocaleString()}
+                </p>
+              </div>
             </div>
-            <div className="flex justify-between items-center">
-              <span className="text-gray-600 dark:text-gray-400">Unique Visitors</span>
-              <span className="font-semibold text-gray-800 dark:text-white">
-                {performance.uniqueVisitors?.toLocaleString()}
-              </span>
+
+            <div className="space-y-4">
+              <div className="flex justify-between items-center">
+                <span className="text-gray-600 dark:text-gray-400">Bounce Rate</span>
+                <span className="font-semibold text-gray-800 dark:text-white">
+                  {performance.bounceRate}%
+                </span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-gray-600 dark:text-gray-400">Avg. Session Duration</span>
+                <span className="font-semibold text-gray-800 dark:text-white">
+                  {Math.floor(performance.averageSessionDuration / 60)}m {performance.averageSessionDuration % 60}s
+                </span>
+              </div>
             </div>
-            <div className="flex justify-between items-center">
-              <span className="text-gray-600 dark:text-gray-400">Bounce Rate</span>
-              <span className="font-semibold text-gray-800 dark:text-white">
-                {performance.bounceRate}%
-              </span>
-            </div>
-            <div className="flex justify-between items-center">
-              <span className="text-gray-600 dark:text-gray-400">Avg. Session</span>
-              <span className="font-semibold text-gray-800 dark:text-white">
-                {Math.floor(performance.averageSessionDuration / 60)}m {performance.averageSessionDuration % 60}s
-              </span>
+
+            {/* Top Pages */}
+            <div>
+              <h4 className="font-medium text-gray-800 dark:text-white mb-3">Top Pages</h4>
+              <div className="space-y-2">
+                {performance.topPages?.slice(0, 3).map((page, index) => (
+                  <div key={index} className="flex justify-between items-center text-sm">
+                    <span className="text-gray-600 dark:text-gray-400 truncate">
+                      {page.page}
+                    </span>
+                    <span className="font-medium text-gray-800 dark:text-white">
+                      {page.views.toLocaleString()}
+                    </span>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </motion.div>
       </div>
-
-      {/* Inventory Analytics */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.5 }}
-        className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6"
-      >
-        <div className="flex justify-between items-center mb-6">
-          <h3 className="text-lg font-semibold text-gray-800 dark:text-white">
-            Inventory Overview
-          </h3>
-          <div className="flex gap-2">
-            <span className="px-3 py-1 bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 rounded-full text-sm">
-              {inventory.totalProducts} Total Products
-            </span>
-            <span className="px-3 py-1 bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200 rounded-full text-sm">
-              {inventory.lowStockItems} Low Stock
-            </span>
-            <span className="px-3 py-1 bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200 rounded-full text-sm">
-              {inventory.outOfStockItems} Out of Stock
-            </span>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {inventory.categoryStock?.map((category, index) => (
-            <div key={category.category} className="space-y-3">
-              <h4 className="font-medium text-gray-800 dark:text-white">
-                {category.category}
-              </h4>
-              <div className="space-y-2">
-                <div className="flex justify-between text-sm">
-                  <span className="text-green-600">In Stock</span>
-                  <span className="font-medium">{category.inStock}</span>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-yellow-600">Low Stock</span>
-                  <span className="font-medium">{category.lowStock}</span>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-red-600">Out of Stock</span>
-                  <span className="font-medium">{category.outOfStock}</span>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </motion.div>
     </div>
   );
 };
