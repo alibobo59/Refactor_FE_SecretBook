@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useBook } from '../../contexts/BookContext';
 import { useChangelog } from '../../contexts/ChangelogContext';
+import { useToast } from '../../contexts/ToastContext';
 import { PageHeader, FormField } from '../../components/admin';
 import {
   ArrowLeft,
@@ -15,6 +16,7 @@ const BookCreatePage = () => {
   const navigate = useNavigate();
   const { categories, addBook } = useBook();
   const { addChangelogEntry } = useChangelog();
+  const toast = useToast();
   
   const [formData, setFormData] = useState({
     title: '',
@@ -54,7 +56,10 @@ const BookCreatePage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    if (!validateForm()) return;
+    if (!validateForm()) {
+      toast.showError('Validation Error', 'Please fix the errors in the form before submitting.');
+      return;
+    }
     
     setLoading(true);
     try {
@@ -78,9 +83,20 @@ const BookCreatePage = () => {
         newBook
       );
       
+      // Show success toast
+      toast.showSuccess(
+        'Book Created Successfully',
+        `"${newBook.title}" has been added to the inventory.`,
+        {
+          actionText: 'View Book',
+          actionUrl: `/admin/books/${newBook.id}`,
+        }
+      );
+      
       navigate(`/admin/books/${newBook.id}`);
     } catch (error) {
       console.error('Failed to create book:', error);
+      toast.showError('Creation Failed', 'Failed to create book. Please try again.');
       setErrors({ submit: 'Failed to create book. Please try again.' });
     } finally {
       setLoading(false);

@@ -1,56 +1,52 @@
 import React from 'react';
-import { createPortal } from 'react-dom';
-import { motion, AnimatePresence } from 'framer-motion';
 import { useToast } from '../../contexts/ToastContext';
 import Toast from './Toast';
+import { AnimatePresence, motion } from 'framer-motion';
 
 const ToastContainer = () => {
-  const toastContext = useToast();
-  
-  // Return null if toast context is not available
-  if (!toastContext) {
-    return null;
-  }
+  const { toasts } = useToast();
 
-  const { toasts, removeToast } = toastContext;
-
-  // Create portal to render toasts outside the normal component tree
-  const toastRoot = document.getElementById('toast-root') || document.body;
-
-  return createPortal(
-    <div className="fixed top-4 right-4 z-[9999] space-y-3 pointer-events-none">
+  return (
+    <div className="fixed top-4 right-4 z-50 space-y-3 max-w-sm w-full">
       <AnimatePresence mode="popLayout">
         {toasts.map((toast, index) => (
           <motion.div
             key={toast.id}
-            layout
-            initial={{ opacity: 0, y: -50, scale: 0.9 }}
+            initial={{ 
+              opacity: 0, 
+              x: 300,
+              scale: 0.8,
+            }}
             animate={{ 
               opacity: 1, 
-              y: 0, 
+              x: 0,
               scale: 1,
-              transition: { 
-                delay: index * 0.1,
-                type: 'spring',
+              transition: {
+                type: "spring",
                 stiffness: 300,
-                damping: 30
+                damping: 30,
+                delay: index * 0.1, // Stagger animation
               }
             }}
             exit={{ 
               opacity: 0, 
-              x: 300, 
-              scale: 0.9,
-              transition: { duration: 0.3 }
+              x: 300,
+              scale: 0.8,
+              transition: {
+                duration: 0.2,
+              }
             }}
-            className="pointer-events-auto"
-            style={{ zIndex: 9999 - index }}
+            layout
+            style={{
+              zIndex: 1000 - index, // Ensure proper stacking order
+            }}
+            className="relative"
           >
-            <Toast toast={toast} onRemove={removeToast} />
+            <Toast toast={toast} />
           </motion.div>
         ))}
       </AnimatePresence>
-    </div>,
-    toastRoot
+    </div>
   );
 };
 
