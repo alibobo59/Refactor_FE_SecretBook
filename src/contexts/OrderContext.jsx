@@ -43,58 +43,311 @@ export const OrderProvider = ({ children }) => {
   // Generate dummy orders for testing
   const generateDummyOrders = () => {
     const statuses = ['pending', 'confirmed', 'processing', 'shipped', 'delivered', 'cancelled'];
+    const paymentMethods = ['cod', 'credit_card', 'paypal', 'bank_transfer'];
+    const paymentStatuses = ['pending', 'completed', 'failed', 'refunded'];
+    
     const customers = [
-      { name: 'John Doe', email: 'john.doe@email.com', phone: '+1 (555) 123-4567' },
-      { name: 'Jane Smith', email: 'jane.smith@email.com', phone: '+1 (555) 987-6543' },
-      { name: 'Michael Johnson', email: 'michael.j@email.com', phone: '+1 (555) 456-7890' },
-      { name: 'Emily Davis', email: 'emily.davis@email.com', phone: '+1 (555) 321-0987' },
-      { name: 'David Wilson', email: 'david.wilson@email.com', phone: '+1 (555) 654-3210' },
-      { name: 'Sarah Brown', email: 'sarah.brown@email.com', phone: '+1 (555) 789-0123' },
-      { name: 'Robert Taylor', email: 'robert.taylor@email.com', phone: '+1 (555) 234-5678' },
-      { name: 'Lisa Anderson', email: 'lisa.anderson@email.com', phone: '+1 (555) 876-5432' },
-      { name: 'James Martinez', email: 'james.martinez@email.com', phone: '+1 (555) 345-6789' },
-      { name: 'Jennifer Garcia', email: 'jennifer.garcia@email.com', phone: '+1 (555) 567-8901' },
+      { 
+        name: 'John Doe', 
+        email: 'john.doe@email.com', 
+        phone: '+1 (555) 123-4567',
+        avatar: 'https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg'
+      },
+      { 
+        name: 'Jane Smith', 
+        email: 'jane.smith@email.com', 
+        phone: '+1 (555) 987-6543',
+        avatar: 'https://images.pexels.com/photos/415829/pexels-photo-415829.jpeg'
+      },
+      { 
+        name: 'Michael Johnson', 
+        email: 'michael.j@email.com', 
+        phone: '+1 (555) 456-7890',
+        avatar: 'https://images.pexels.com/photos/1222271/pexels-photo-1222271.jpeg'
+      },
+      { 
+        name: 'Emily Davis', 
+        email: 'emily.davis@email.com', 
+        phone: '+1 (555) 321-0987',
+        avatar: 'https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg'
+      },
+      { 
+        name: 'David Wilson', 
+        email: 'david.wilson@email.com', 
+        phone: '+1 (555) 654-3210',
+        avatar: 'https://images.pexels.com/photos/614810/pexels-photo-614810.jpeg'
+      },
+      { 
+        name: 'Sarah Brown', 
+        email: 'sarah.brown@email.com', 
+        phone: '+1 (555) 789-0123',
+        avatar: 'https://images.pexels.com/photos/1130626/pexels-photo-1130626.jpeg'
+      },
+      { 
+        name: 'Robert Taylor', 
+        email: 'robert.taylor@email.com', 
+        phone: '+1 (555) 234-5678',
+        avatar: 'https://images.pexels.com/photos/1043471/pexels-photo-1043471.jpeg'
+      },
+      { 
+        name: 'Lisa Anderson', 
+        email: 'lisa.anderson@email.com', 
+        phone: '+1 (555) 876-5432',
+        avatar: 'https://images.pexels.com/photos/1181686/pexels-photo-1181686.jpeg'
+      },
+      { 
+        name: 'James Martinez', 
+        email: 'james.martinez@email.com', 
+        phone: '+1 (555) 345-6789',
+        avatar: 'https://images.pexels.com/photos/1040880/pexels-photo-1040880.jpeg'
+      },
+      { 
+        name: 'Jennifer Garcia', 
+        email: 'jennifer.garcia@email.com', 
+        phone: '+1 (555) 567-8901',
+        avatar: 'https://images.pexels.com/photos/1181424/pexels-photo-1181424.jpeg'
+      },
+      { 
+        name: 'Christopher Lee', 
+        email: 'chris.lee@email.com', 
+        phone: '+1 (555) 432-1098',
+        avatar: 'https://images.pexels.com/photos/1043473/pexels-photo-1043473.jpeg'
+      },
+      { 
+        name: 'Amanda White', 
+        email: 'amanda.white@email.com', 
+        phone: '+1 (555) 765-4321',
+        avatar: 'https://images.pexels.com/photos/1181690/pexels-photo-1181690.jpeg'
+      },
+      { 
+        name: 'Daniel Thompson', 
+        email: 'daniel.thompson@email.com', 
+        phone: '+1 (555) 098-7654',
+        avatar: 'https://images.pexels.com/photos/1040881/pexels-photo-1040881.jpeg'
+      },
+      { 
+        name: 'Michelle Rodriguez', 
+        email: 'michelle.rodriguez@email.com', 
+        phone: '+1 (555) 210-9876',
+        avatar: 'https://images.pexels.com/photos/1181519/pexels-photo-1181519.jpeg'
+      },
+      { 
+        name: 'Kevin Clark', 
+        email: 'kevin.clark@email.com', 
+        phone: '+1 (555) 543-2109',
+        avatar: 'https://images.pexels.com/photos/1043474/pexels-photo-1043474.jpeg'
+      }
     ];
 
     const books = [
-      { id: 1, title: 'The Great Gatsby', author: 'F. Scott Fitzgerald', price: 12.99, coverImage: 'https://images.pexels.com/photos/159711/books-bookstore-book-reading-159711.jpeg' },
-      { id: 2, title: 'To Kill a Mockingbird', author: 'Harper Lee', price: 14.99, coverImage: 'https://images.pexels.com/photos/159711/books-bookstore-book-reading-159711.jpeg' },
-      { id: 3, title: '1984', author: 'George Orwell', price: 13.99, coverImage: 'https://images.pexels.com/photos/159711/books-bookstore-book-reading-159711.jpeg' },
-      { id: 4, title: 'Pride and Prejudice', author: 'Jane Austen', price: 11.99, coverImage: 'https://images.pexels.com/photos/159711/books-bookstore-book-reading-159711.jpeg' },
-      { id: 5, title: 'The Hobbit', author: 'J.R.R. Tolkien', price: 16.99, coverImage: 'https://images.pexels.com/photos/159711/books-bookstore-book-reading-159711.jpeg' },
-      { id: 6, title: 'Harry Potter and the Sorcerer\'s Stone', author: 'J.K. Rowling', price: 15.99, coverImage: 'https://images.pexels.com/photos/159711/books-bookstore-book-reading-159711.jpeg' },
-      { id: 7, title: 'The Catcher in the Rye', author: 'J.D. Salinger', price: 13.50, coverImage: 'https://images.pexels.com/photos/159711/books-bookstore-book-reading-159711.jpeg' },
-      { id: 8, title: 'Lord of the Flies', author: 'William Golding', price: 12.50, coverImage: 'https://images.pexels.com/photos/159711/books-bookstore-book-reading-159711.jpeg' },
+      { 
+        id: 1, 
+        title: 'The Great Gatsby', 
+        author: 'F. Scott Fitzgerald', 
+        price: 12.99, 
+        coverImage: 'https://images.pexels.com/photos/159711/books-bookstore-book-reading-159711.jpeg',
+        isbn: '978-0-7432-7356-5'
+      },
+      { 
+        id: 2, 
+        title: 'To Kill a Mockingbird', 
+        author: 'Harper Lee', 
+        price: 14.99, 
+        coverImage: 'https://images.pexels.com/photos/159711/books-bookstore-book-reading-159711.jpeg',
+        isbn: '978-0-06-112008-4'
+      },
+      { 
+        id: 3, 
+        title: '1984', 
+        author: 'George Orwell', 
+        price: 13.99, 
+        coverImage: 'https://images.pexels.com/photos/159711/books-bookstore-book-reading-159711.jpeg',
+        isbn: '978-0-452-28423-4'
+      },
+      { 
+        id: 4, 
+        title: 'Pride and Prejudice', 
+        author: 'Jane Austen', 
+        price: 11.99, 
+        coverImage: 'https://images.pexels.com/photos/159711/books-bookstore-book-reading-159711.jpeg',
+        isbn: '978-0-14-143951-8'
+      },
+      { 
+        id: 5, 
+        title: 'The Hobbit', 
+        author: 'J.R.R. Tolkien', 
+        price: 16.99, 
+        coverImage: 'https://images.pexels.com/photos/159711/books-bookstore-book-reading-159711.jpeg',
+        isbn: '978-0-547-92822-7'
+      },
+      { 
+        id: 6, 
+        title: 'Harry Potter and the Sorcerer\'s Stone', 
+        author: 'J.K. Rowling', 
+        price: 15.99, 
+        coverImage: 'https://images.pexels.com/photos/159711/books-bookstore-book-reading-159711.jpeg',
+        isbn: '978-0-439-70818-8'
+      },
+      { 
+        id: 7, 
+        title: 'The Catcher in the Rye', 
+        author: 'J.D. Salinger', 
+        price: 13.50, 
+        coverImage: 'https://images.pexels.com/photos/159711/books-bookstore-book-reading-159711.jpeg',
+        isbn: '978-0-316-76948-0'
+      },
+      { 
+        id: 8, 
+        title: 'Lord of the Flies', 
+        author: 'William Golding', 
+        price: 12.50, 
+        coverImage: 'https://images.pexels.com/photos/159711/books-bookstore-book-reading-159711.jpeg',
+        isbn: '978-0-571-05686-2'
+      },
+      { 
+        id: 9, 
+        title: 'The Chronicles of Narnia', 
+        author: 'C.S. Lewis', 
+        price: 24.99, 
+        coverImage: 'https://images.pexels.com/photos/159711/books-bookstore-book-reading-159711.jpeg',
+        isbn: '978-0-06-623851-4'
+      },
+      { 
+        id: 10, 
+        title: 'Dune', 
+        author: 'Frank Herbert', 
+        price: 18.99, 
+        coverImage: 'https://images.pexels.com/photos/159711/books-bookstore-book-reading-159711.jpeg',
+        isbn: '978-0-441-17271-9'
+      },
+      { 
+        id: 11, 
+        title: 'The Alchemist', 
+        author: 'Paulo Coelho', 
+        price: 14.95, 
+        coverImage: 'https://images.pexels.com/photos/159711/books-bookstore-book-reading-159711.jpeg',
+        isbn: '978-0-06-231500-7'
+      },
+      { 
+        id: 12, 
+        title: 'Brave New World', 
+        author: 'Aldous Huxley', 
+        price: 15.99, 
+        coverImage: 'https://images.pexels.com/photos/159711/books-bookstore-book-reading-159711.jpeg',
+        isbn: '978-0-06-085052-4'
+      }
     ];
 
     const addresses = [
-      { firstName: 'John', lastName: 'Doe', address: '123 Main St', city: 'New York', state: 'NY', postalCode: '10001', country: 'USA' },
-      { firstName: 'Jane', lastName: 'Smith', address: '456 Oak Ave', city: 'Los Angeles', state: 'CA', postalCode: '90210', country: 'USA' },
-      { firstName: 'Michael', lastName: 'Johnson', address: '789 Pine Rd', city: 'Chicago', state: 'IL', postalCode: '60601', country: 'USA' },
-      { firstName: 'Emily', lastName: 'Davis', address: '321 Elm St', city: 'Houston', state: 'TX', postalCode: '77001', country: 'USA' },
-      { firstName: 'David', lastName: 'Wilson', address: '654 Maple Dr', city: 'Phoenix', state: 'AZ', postalCode: '85001', country: 'USA' },
-      { firstName: 'Sarah', lastName: 'Brown', address: '987 Cedar Ln', city: 'Philadelphia', state: 'PA', postalCode: '19101', country: 'USA' },
-      { firstName: 'Robert', lastName: 'Taylor', address: '147 Birch Way', city: 'San Antonio', state: 'TX', postalCode: '78201', country: 'USA' },
-      { firstName: 'Lisa', lastName: 'Anderson', address: '258 Spruce St', city: 'San Diego', state: 'CA', postalCode: '92101', country: 'USA' },
-      { firstName: 'James', lastName: 'Martinez', address: '369 Willow Ave', city: 'Dallas', state: 'TX', postalCode: '75201', country: 'USA' },
-      { firstName: 'Jennifer', lastName: 'Garcia', address: '741 Poplar Rd', city: 'San Jose', state: 'CA', postalCode: '95101', country: 'USA' },
+      { 
+        firstName: 'John', 
+        lastName: 'Doe', 
+        address: '123 Main St', 
+        city: 'New York', 
+        state: 'NY', 
+        postalCode: '10001', 
+        country: 'USA' 
+      },
+      { 
+        firstName: 'Jane', 
+        lastName: 'Smith', 
+        address: '456 Oak Ave', 
+        city: 'Los Angeles', 
+        state: 'CA', 
+        postalCode: '90210', 
+        country: 'USA' 
+      },
+      { 
+        firstName: 'Michael', 
+        lastName: 'Johnson', 
+        address: '789 Pine Rd', 
+        city: 'Chicago', 
+        state: 'IL', 
+        postalCode: '60601', 
+        country: 'USA' 
+      },
+      { 
+        firstName: 'Emily', 
+        lastName: 'Davis', 
+        address: '321 Elm St', 
+        city: 'Houston', 
+        state: 'TX', 
+        postalCode: '77001', 
+        country: 'USA' 
+      },
+      { 
+        firstName: 'David', 
+        lastName: 'Wilson', 
+        address: '654 Maple Dr', 
+        city: 'Phoenix', 
+        state: 'AZ', 
+        postalCode: '85001', 
+        country: 'USA' 
+      },
+      { 
+        firstName: 'Sarah', 
+        lastName: 'Brown', 
+        address: '987 Cedar Ln', 
+        city: 'Philadelphia', 
+        state: 'PA', 
+        postalCode: '19101', 
+        country: 'USA' 
+      },
+      { 
+        firstName: 'Robert', 
+        lastName: 'Taylor', 
+        address: '147 Birch Way', 
+        city: 'San Antonio', 
+        state: 'TX', 
+        postalCode: '78201', 
+        country: 'USA' 
+      },
+      { 
+        firstName: 'Lisa', 
+        lastName: 'Anderson', 
+        address: '258 Spruce St', 
+        city: 'San Diego', 
+        state: 'CA', 
+        postalCode: '92101', 
+        country: 'USA' 
+      },
+      { 
+        firstName: 'James', 
+        lastName: 'Martinez', 
+        address: '369 Willow Ave', 
+        city: 'Dallas', 
+        state: 'TX', 
+        postalCode: '75201', 
+        country: 'USA' 
+      },
+      { 
+        firstName: 'Jennifer', 
+        lastName: 'Garcia', 
+        address: '741 Poplar Rd', 
+        city: 'San Jose', 
+        state: 'CA', 
+        postalCode: '95101', 
+        country: 'USA' 
+      }
     ];
 
     const dummyOrders = [];
     const now = new Date();
 
-    for (let i = 0; i < 50; i++) {
+    // Generate orders for the last 6 months
+    for (let i = 0; i < 150; i++) {
       const customer = customers[Math.floor(Math.random() * customers.length)];
       const status = statuses[Math.floor(Math.random() * statuses.length)];
+      const paymentMethod = paymentMethods[Math.floor(Math.random() * paymentMethods.length)];
       const address = addresses[Math.floor(Math.random() * addresses.length)];
       
-      // Generate random date within last 3 months
-      const randomDate = new Date(now.getTime() - Math.random() * 90 * 24 * 60 * 60 * 1000);
+      // Generate random date within last 6 months
+      const randomDate = new Date(now.getTime() - Math.random() * 180 * 24 * 60 * 60 * 1000);
       
-      // Generate 1-4 random items per order
-      const itemCount = Math.floor(Math.random() * 4) + 1;
+      // Generate 1-5 random items per order
+      const itemCount = Math.floor(Math.random() * 5) + 1;
       const orderItems = [];
-      let orderTotal = 0;
+      let orderSubtotal = 0;
       
       for (let j = 0; j < itemCount; j++) {
         const book = books[Math.floor(Math.random() * books.length)];
@@ -108,24 +361,37 @@ export const OrderProvider = ({ children }) => {
           price: book.price,
           quantity: quantity,
           coverImage: book.coverImage,
+          isbn: book.isbn,
         });
         
-        orderTotal += itemTotal;
+        orderSubtotal += itemTotal;
       }
 
-      // Add shipping cost
-      const shippingCost = orderTotal > 50 ? 0 : 5.99;
-      orderTotal += shippingCost;
+      // Calculate shipping cost
+      const shippingCost = orderSubtotal > 50 ? 0 : Math.random() > 0.3 ? 5.99 : 9.99;
+      
+      // Calculate tax (8.5%)
+      const tax = orderSubtotal * 0.085;
+      const orderTotal = orderSubtotal + shippingCost + tax;
 
-      // Add tax (8.5%)
-      const tax = orderTotal * 0.085;
-      orderTotal += tax;
+      // Determine payment status based on order status
+      let paymentStatus;
+      if (status === 'cancelled') {
+        paymentStatus = Math.random() > 0.5 ? 'failed' : 'refunded';
+      } else if (status === 'delivered') {
+        paymentStatus = 'completed';
+      } else if (status === 'confirmed' || status === 'processing' || status === 'shipped') {
+        paymentStatus = paymentMethod === 'cod' ? 'pending' : 'completed';
+      } else {
+        paymentStatus = 'pending';
+      }
 
       const order = {
-        id: `ORD-${String(i + 1).padStart(4, '0')}`,
+        id: `ORD-${String(i + 1).padStart(5, '0')}`,
         userId: Math.floor(Math.random() * 100) + 1,
         customerName: customer.name,
         customerEmail: customer.email,
+        customerAvatar: customer.avatar,
         contactInfo: {
           phone: customer.phone,
           email: customer.email,
@@ -133,20 +399,22 @@ export const OrderProvider = ({ children }) => {
         shippingAddress: address,
         billingAddress: address,
         items: orderItems,
-        subtotal: orderTotal - shippingCost - tax,
+        subtotal: orderSubtotal,
         shipping: shippingCost,
         tax: tax,
         total: orderTotal,
         status: status,
-        paymentMethod: 'cod',
-        paymentStatus: status === 'cancelled' ? 'failed' : 
-                      status === 'delivered' ? 'completed' : 
-                      status === 'confirmed' || status === 'processing' || status === 'shipped' ? 'pending' : 'pending',
+        paymentMethod: paymentMethod,
+        paymentStatus: paymentStatus,
         createdAt: randomDate.toISOString(),
         updatedAt: randomDate.toISOString(),
-        estimatedDelivery: new Date(randomDate.getTime() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+        estimatedDelivery: new Date(randomDate.getTime() + (7 + Math.floor(Math.random() * 7)) * 24 * 60 * 60 * 1000).toISOString(),
         notes: generateOrderNotes(status),
-        trackingNumber: status === 'shipped' || status === 'delivered' ? `TRK${Math.random().toString(36).substr(2, 9).toUpperCase()}` : null,
+        trackingNumber: (status === 'shipped' || status === 'delivered') ? `TRK${Math.random().toString(36).substr(2, 9).toUpperCase()}` : null,
+        priority: Math.random() > 0.8 ? 'high' : Math.random() > 0.6 ? 'medium' : 'normal',
+        source: Math.random() > 0.7 ? 'mobile' : 'web',
+        discountCode: Math.random() > 0.8 ? ['SAVE10', 'WELCOME20', 'SUMMER25'][Math.floor(Math.random() * 3)] : null,
+        discountAmount: Math.random() > 0.8 ? orderSubtotal * 0.1 : 0,
       };
 
       dummyOrders.push(order);
@@ -158,14 +426,46 @@ export const OrderProvider = ({ children }) => {
 
   const generateOrderNotes = (status) => {
     const notes = {
-      pending: 'Order received and awaiting confirmation.',
-      confirmed: 'Order confirmed and being prepared for shipment.',
-      processing: 'Order is being processed in our warehouse.',
-      shipped: 'Order has been shipped and is on its way to the customer.',
-      delivered: 'Order has been successfully delivered to the customer.',
-      cancelled: 'Order was cancelled at customer request.',
+      pending: [
+        'Order received and awaiting confirmation.',
+        'Payment verification in progress.',
+        'Waiting for inventory check.',
+        'Order queued for processing.',
+      ],
+      confirmed: [
+        'Order confirmed and being prepared for shipment.',
+        'Items reserved and payment processed.',
+        'Order moved to fulfillment queue.',
+        'Preparing items for packaging.',
+      ],
+      processing: [
+        'Order is being processed in our warehouse.',
+        'Items being picked and packed.',
+        'Quality check in progress.',
+        'Preparing shipping label.',
+      ],
+      shipped: [
+        'Order has been shipped and is on its way to the customer.',
+        'Package handed over to carrier.',
+        'Tracking information sent to customer.',
+        'In transit to destination.',
+      ],
+      delivered: [
+        'Order has been successfully delivered to the customer.',
+        'Package delivered and signed for.',
+        'Delivery confirmed by carrier.',
+        'Customer notified of successful delivery.',
+      ],
+      cancelled: [
+        'Order was cancelled at customer request.',
+        'Order cancelled due to payment failure.',
+        'Cancelled - item out of stock.',
+        'Customer requested cancellation before shipping.',
+      ],
     };
-    return notes[status] || 'No additional notes.';
+    
+    const statusNotes = notes[status] || ['No additional notes.'];
+    return statusNotes[Math.floor(Math.random() * statusNotes.length)];
   };
 
   // Save orders to localStorage whenever they change
@@ -192,6 +492,7 @@ export const OrderProvider = ({ children }) => {
         userId: user.id,
         customerName: user.name,
         customerEmail: user.email,
+        customerAvatar: user.avatar || 'https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg',
         ...orderData,
         status: 'pending',
         paymentMethod: 'cod',
@@ -199,6 +500,8 @@ export const OrderProvider = ({ children }) => {
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
         estimatedDelivery: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(), // 7 days from now
+        priority: 'normal',
+        source: 'web',
       };
 
       setOrders(prevOrders => [newOrder, ...prevOrders]);
