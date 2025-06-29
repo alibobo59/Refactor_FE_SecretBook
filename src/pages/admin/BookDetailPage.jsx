@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useBook } from '../../contexts/BookContext';
+import { useVariation } from '../../contexts/VariationContext';
 import { useChangelog } from '../../contexts/ChangelogContext';
 import { PageHeader, StatCard, Table } from '../../components/admin';
+import VariationManager from '../../components/variations/VariationManager';
 import {
   ArrowLeft,
   Edit,
@@ -18,6 +20,7 @@ import {
   Activity,
   FileText,
   Image,
+  Layers,
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 
@@ -25,8 +28,10 @@ const BookDetailPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { books, categories } = useBook();
+  const { getVariationsByBookId } = useVariation();
   const { getChangelogForEntity } = useChangelog();
   const [book, setBook] = useState(null);
+  const [variations, setVariations] = useState([]);
   const [changelog, setChangelog] = useState([]);
   const [activeTab, setActiveTab] = useState('details');
 
@@ -35,8 +40,12 @@ const BookDetailPage = () => {
     if (foundBook) {
       setBook(foundBook);
       setChangelog(getChangelogForEntity('book', foundBook.id));
+      
+      // Load variations
+      const bookVariations = getVariationsByBookId(foundBook.id);
+      setVariations(bookVariations);
     }
-  }, [id, books, getChangelogForEntity]);
+  }, [id, books, getChangelogForEntity, getVariationsByBookId]);
 
   if (!book) {
     return (
@@ -63,6 +72,7 @@ const BookDetailPage = () => {
 
   const tabs = [
     { id: 'details', label: 'Details', icon: FileText },
+    { id: 'variations', label: 'Variations', icon: Layers, count: variations.length },
     { id: 'changelog', label: 'Changelog', icon: Activity },
     { id: 'media', label: 'Media', icon: Image },
   ];
@@ -190,6 +200,11 @@ const BookDetailPage = () => {
                 >
                   <Icon className="h-5 w-5" />
                   {tab.label}
+                  {tab.count !== undefined && (
+                    <span className="ml-1 px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded-full text-xs">
+                      {tab.count}
+                    </span>
+                  )}
                 </button>
               );
             })}
@@ -323,6 +338,16 @@ const BookDetailPage = () => {
             </div>
           )}
 
+          {/* Variations Tab */}
+          {activeTab === 'variations' && (
+            <VariationManager
+              bookId={book.id}
+              bookTitle={book.title}
+              mainBookImage={book.cover_image}
+              onVariationsChange={setVariations}
+            />
+          )}
+
           {/* Changelog Tab */}
           {activeTab === 'changelog' && (
             <div>
@@ -437,6 +462,26 @@ const BookDetailPage = () => {
                     </button>
                   </div>
                 </div>
+
+                {/* Variation Images */}
+                {variations.map((variation) => (
+                  <div key={variation.id} className="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
+                    <div className="aspect-w-3 aspect-h-4 mb-3">
+                      <img
+                        src={variation.image}
+                        alt={variation.name}
+                        className="w-full h-48 object-cover rounded"
+                      />
+                    </div>
+                    <div className="text-center">
+                      <h4 className="font-medium text-gray-800 dark:text-white">{variation.name}</h4>
+                      <p className="text-sm text-gray-600 dark:text-gray-400">Variation image</p>
+                      <button className="mt-2 text-amber-600 hover:text-amber-700 text-sm">
+                        Replace Image
+                      </button>
+                    </div>
+                  </div>
+                ))}
 
                 {/* Add more media placeholder */}
                 <div className="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-600">
