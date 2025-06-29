@@ -16,6 +16,12 @@ import {
   Building2,
   UserSquare2,
   Activity,
+  BarChart3,
+  Megaphone,
+  Package,
+  Shield,
+  FileText,
+  UserCheck,
 } from "lucide-react";
 
 import BookManagement from "./BookManagement";
@@ -26,6 +32,12 @@ import DashboardHome from "./DashboardHome";
 import AuthorManagement from "./AuthorManagement";
 import PublisherManagement from "./PublisherManagement";
 import LogManagement from "./LogManagement";
+import AnalyticsDashboard from "./AnalyticsDashboard";
+import MarketingManagement from "./MarketingManagement";
+import BulkOperations from "./BulkOperations";
+import EnhancedUserManagement from "./EnhancedUserManagement";
+import SecurityAudit from "./SecurityAudit";
+import ContentManagement from "./ContentManagement";
 import AdminHeader from "../../components/admin/AdminHeader";
 
 const AdminDashboard = () => {
@@ -62,7 +74,13 @@ const AdminDashboard = () => {
     { id: "authors", label: "Authors", icon: <UserSquare2 size={20} /> },
     { id: "publishers", label: "Publishers", icon: <Building2 size={20} /> },
     { id: "users", label: "Users", icon: <Users size={20} /> },
+    { id: "enhanced-users", label: "Enhanced Users", icon: <UserCheck size={20} /> },
     { id: "orders", label: "Orders", icon: <ShoppingCart size={20} /> },
+    { id: "analytics", label: "Analytics", icon: <BarChart3 size={20} /> },
+    { id: "marketing", label: "Marketing", icon: <Megaphone size={20} /> },
+    { id: "bulk-ops", label: "Bulk Operations", icon: <Package size={20} /> },
+    { id: "security", label: "Security", icon: <Shield size={20} /> },
+    { id: "content", label: "Content", icon: <FileText size={20} /> },
     { id: "logs", label: "System Logs", icon: <Activity size={20} /> },
   ];
 
@@ -163,7 +181,13 @@ const AdminDashboard = () => {
           {activeTab === "authors" && <AuthorManagement />}
           {activeTab === "publishers" && <PublisherManagement />}
           {activeTab === "users" && <UserManagement />}
+          {activeTab === "enhanced-users" && <EnhancedUserManagement />}
           {activeTab === "orders" && <OrderManagement />}
+          {activeTab === "analytics" && <AnalyticsDashboard />}
+          {activeTab === "marketing" && <MarketingManagement />}
+          {activeTab === "bulk-ops" && <BulkOperations />}
+          {activeTab === "security" && <SecurityAudit />}
+          {activeTab === "content" && <ContentManagement />}
           {activeTab === "logs" && <LogManagement />}
         </main>
       </div>
