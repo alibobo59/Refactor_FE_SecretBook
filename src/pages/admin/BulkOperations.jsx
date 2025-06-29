@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useBook } from '../../contexts/BookContext';
 import { PageHeader, Table, Modal, FormField } from '../../components/admin';
 import {
@@ -13,10 +14,15 @@ import {
   FileText,
   Trash2,
   Edit,
+  BarChart3,
+  Clock,
+  CheckCircle,
+  XCircle,
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 const BulkOperations = () => {
+  const navigate = useNavigate();
   const { books, categories } = useBook();
   const [selectedBooks, setSelectedBooks] = useState(new Set());
   const [selectAll, setSelectAll] = useState(false);
@@ -149,46 +155,203 @@ const BulkOperations = () => {
     
     try {
       // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      await new Promise(resolve => setTimeout(resolve, 3000));
       
       const selectedBooksArray = Array.from(selectedBooks);
       let successCount = 0;
       let errorCount = 0;
+      let warningCount = 0;
+      const detailedResults = [];
       
-      // Mock operation results
+      // Mock operation results with detailed information
       if (activeOperation.id === 'price-update') {
-        successCount = selectedBooksArray.length;
-        // In real implementation, update prices in database
+        selectedBooksArray.forEach(bookId => {
+          const book = books.find(b => b.id === bookId);
+          const random = Math.random();
+          
+          if (random > 0.9) {
+            // Error case
+            errorCount++;
+            detailedResults.push({
+              id: bookId,
+              name: book.title,
+              status: 'error',
+              oldValue: `$${book.price.toFixed(2)}`,
+              newValue: null,
+              message: 'Price update failed: Book is currently out of stock',
+            });
+          } else if (random > 0.8) {
+            // Warning case
+            warningCount++;
+            const newPrice = operationData.updateType === 'percentage' 
+              ? book.price * (1 + operationData.value / 100)
+              : book.price + parseFloat(operationData.value);
+            detailedResults.push({
+              id: bookId,
+              name: book.title,
+              status: 'warning',
+              oldValue: `$${book.price.toFixed(2)}`,
+              newValue: `$${newPrice.toFixed(2)}`,
+              message: 'Price updated but below minimum margin threshold',
+            });
+            successCount++;
+          } else {
+            // Success case
+            const newPrice = operationData.updateType === 'percentage' 
+              ? book.price * (1 + operationData.value / 100)
+              : book.price + parseFloat(operationData.value);
+            detailedResults.push({
+              id: bookId,
+              name: book.title,
+              status: 'success',
+              oldValue: `$${book.price.toFixed(2)}`,
+              newValue: `$${newPrice.toFixed(2)}`,
+              message: 'Price updated successfully',
+            });
+            successCount++;
+          }
+        });
       } else if (activeOperation.id === 'stock-update') {
-        successCount = selectedBooksArray.length;
-        // In real implementation, update stock in database
+        selectedBooksArray.forEach(bookId => {
+          const book = books.find(b => b.id === bookId);
+          const random = Math.random();
+          
+          if (random > 0.95) {
+            errorCount++;
+            detailedResults.push({
+              id: bookId,
+              name: book.title,
+              status: 'error',
+              oldValue: book.stock.toString(),
+              newValue: null,
+              message: 'Stock update failed: Invalid quantity specified',
+            });
+          } else {
+            const newStock = operationData.updateType === 'add' 
+              ? book.stock + parseInt(operationData.quantity)
+              : operationData.updateType === 'subtract'
+              ? Math.max(0, book.stock - parseInt(operationData.quantity))
+              : parseInt(operationData.quantity);
+            
+            detailedResults.push({
+              id: bookId,
+              name: book.title,
+              status: 'success',
+              oldValue: book.stock.toString(),
+              newValue: newStock.toString(),
+              message: 'Stock updated successfully',
+            });
+            successCount++;
+          }
+        });
       } else if (activeOperation.id === 'category-update') {
-        successCount = selectedBooksArray.length;
-        // In real implementation, update categories in database
+        selectedBooksArray.forEach(bookId => {
+          const book = books.find(b => b.id === bookId);
+          const category = categories.find(c => c.id === parseInt(operationData.categoryId));
+          
+          detailedResults.push({
+            id: bookId,
+            name: book.title,
+            status: 'success',
+            oldValue: categories.find(c => c.id === book.category_id)?.name || 'Unknown',
+            newValue: category?.name || 'Unknown',
+            message: 'Category updated successfully',
+          });
+          successCount++;
+        });
       } else if (activeOperation.id === 'status-update') {
-        successCount = selectedBooksArray.length;
-        // In real implementation, update status in database
+        selectedBooksArray.forEach(bookId => {
+          const book = books.find(b => b.id === bookId);
+          
+          detailedResults.push({
+            id: bookId,
+            name: book.title,
+            status: 'success',
+            oldValue: book.status || 'active',
+            newValue: operationData.status,
+            message: 'Status updated successfully',
+          });
+          successCount++;
+        });
       } else if (activeOperation.id === 'import') {
         // Mock import results
-        successCount = Math.floor(Math.random() * 50) + 10;
-        errorCount = Math.floor(Math.random() * 5);
+        const totalImported = Math.floor(Math.random() * 50) + 10;
+        successCount = Math.floor(totalImported * 0.85);
+        errorCount = Math.floor(totalImported * 0.1);
+        warningCount = totalImported - successCount - errorCount;
+        
+        // Generate sample results
+        for (let i = 0; i < Math.min(totalImported, 20); i++) {
+          const random = Math.random();
+          if (random > 0.9) {
+            detailedResults.push({
+              id: `import-${i}`,
+              name: `Book Title ${i + 1}`,
+              status: 'error',
+              oldValue: null,
+              newValue: null,
+              message: 'Import failed: Duplicate ISBN found',
+            });
+          } else if (random > 0.8) {
+            detailedResults.push({
+              id: `import-${i}`,
+              name: `Book Title ${i + 1}`,
+              status: 'warning',
+              oldValue: null,
+              newValue: 'Imported',
+              message: 'Imported with warnings: Missing category, assigned to default',
+            });
+          } else {
+            detailedResults.push({
+              id: `import-${i}`,
+              name: `Book Title ${i + 1}`,
+              status: 'success',
+              oldValue: null,
+              newValue: 'Imported',
+              message: 'Book imported successfully',
+            });
+          }
+        }
       }
       
-      setResults({
+      const operationId = `op-${Date.now()}`;
+      const operationResults = {
+        id: operationId,
+        type: activeOperation.id,
+        name: activeOperation.title,
         success: successCount,
         errors: errorCount,
-        total: successCount + errorCount,
-      });
+        warnings: warningCount,
+        total: successCount + errorCount + warningCount,
+        details: detailedResults,
+        timestamp: new Date().toISOString(),
+        parameters: operationData,
+      };
+      
+      // Store operation results in localStorage for the report page
+      const existingReports = JSON.parse(localStorage.getItem('bulkOperationReports') || '[]');
+      existingReports.push(operationResults);
+      localStorage.setItem('bulkOperationReports', JSON.stringify(existingReports));
+      
+      setResults(operationResults);
       
     } catch (error) {
       console.error('Operation failed:', error);
       setResults({
         success: 0,
         errors: selectedBooks.size,
+        warnings: 0,
         total: selectedBooks.size,
+        details: [],
       });
     } finally {
       setIsProcessing(false);
+    }
+  };
+
+  const viewDetailedReport = () => {
+    if (results && results.id) {
+      navigate(`/admin/bulk-operations/${results.id}/report`);
     }
   };
 
@@ -346,8 +509,8 @@ const BulkOperations = () => {
         }
       >
         {results ? (
-          // Results Display
-          <div className="space-y-4">
+          // Enhanced Results Display
+          <div className="space-y-6">
             <div className="text-center">
               <div className="w-16 h-16 bg-green-100 dark:bg-green-900 rounded-full flex items-center justify-center mx-auto mb-4">
                 <CheckSquare className="h-8 w-8 text-green-600 dark:text-green-400" />
@@ -355,33 +518,89 @@ const BulkOperations = () => {
               <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-2">
                 Operation Completed
               </h3>
+              <p className="text-gray-600 dark:text-gray-400">
+                {activeOperation?.title} has been processed
+              </p>
             </div>
             
             <div className="grid grid-cols-3 gap-4 text-center">
               <div className="bg-green-50 dark:bg-green-900/20 p-4 rounded-lg">
+                <div className="flex items-center justify-center gap-2 mb-2">
+                  <CheckCircle className="h-5 w-5 text-green-600 dark:text-green-400" />
+                  <span className="text-sm font-medium text-green-700 dark:text-green-300">
+                    Successful
+                  </span>
+                </div>
                 <p className="text-2xl font-bold text-green-600 dark:text-green-400">
                   {results.success}
                 </p>
-                <p className="text-sm text-green-700 dark:text-green-300">
-                  Successful
-                </p>
               </div>
+              
+              {results.warnings > 0 && (
+                <div className="bg-yellow-50 dark:bg-yellow-900/20 p-4 rounded-lg">
+                  <div className="flex items-center justify-center gap-2 mb-2">
+                    <AlertTriangle className="h-5 w-5 text-yellow-600 dark:text-yellow-400" />
+                    <span className="text-sm font-medium text-yellow-700 dark:text-yellow-300">
+                      Warnings
+                    </span>
+                  </div>
+                  <p className="text-2xl font-bold text-yellow-600 dark:text-yellow-400">
+                    {results.warnings}
+                  </p>
+                </div>
+              )}
+              
               <div className="bg-red-50 dark:bg-red-900/20 p-4 rounded-lg">
+                <div className="flex items-center justify-center gap-2 mb-2">
+                  <XCircle className="h-5 w-5 text-red-600 dark:text-red-400" />
+                  <span className="text-sm font-medium text-red-700 dark:text-red-300">
+                    Errors
+                  </span>
+                </div>
                 <p className="text-2xl font-bold text-red-600 dark:text-red-400">
                   {results.errors}
                 </p>
-                <p className="text-sm text-red-700 dark:text-red-300">
-                  Errors
-                </p>
               </div>
-              <div className="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
-                <p className="text-2xl font-bold text-gray-600 dark:text-gray-400">
-                  {results.total}
-                </p>
-                <p className="text-sm text-gray-700 dark:text-gray-300">
-                  Total
-                </p>
+            </div>
+
+            {/* Quick Preview of Results */}
+            {results.details && results.details.length > 0 && (
+              <div>
+                <h4 className="font-medium text-gray-800 dark:text-white mb-3">
+                  Sample Results (showing first 5)
+                </h4>
+                <div className="space-y-2 max-h-40 overflow-y-auto">
+                  {results.details.slice(0, 5).map((detail, index) => (
+                    <div key={index} className="flex items-center justify-between p-2 bg-gray-50 dark:bg-gray-700 rounded text-sm">
+                      <div className="flex items-center gap-2">
+                        {detail.status === 'success' && <CheckCircle className="h-4 w-4 text-green-500" />}
+                        {detail.status === 'warning' && <AlertTriangle className="h-4 w-4 text-yellow-500" />}
+                        {detail.status === 'error' && <XCircle className="h-4 w-4 text-red-500" />}
+                        <span className="font-medium">{detail.name}</span>
+                      </div>
+                      <span className="text-gray-600 dark:text-gray-400 text-xs">
+                        {detail.message}
+                      </span>
+                    </div>
+                  ))}
+                </div>
               </div>
+            )}
+
+            <div className="flex justify-center gap-3">
+              <button
+                onClick={viewDetailedReport}
+                className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+              >
+                <BarChart3 className="h-4 w-4" />
+                View Detailed Report
+              </button>
+              <button
+                onClick={() => setIsModalOpen(false)}
+                className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+              >
+                Close
+              </button>
             </div>
           </div>
         ) : (
