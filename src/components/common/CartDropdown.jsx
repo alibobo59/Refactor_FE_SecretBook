@@ -1,21 +1,18 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useRef, useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { ShoppingCart, X, Plus, Minus, Trash2 } from 'lucide-react';
 import { useCart } from '../../contexts/CartContext';
 import { useLanguage } from '../../contexts/LanguageContext';
-import {
-  ShoppingCart,
-  Plus,
-  Minus,
-  Trash2,
-  X,
-} from 'lucide-react';
+import { useNavigate, Link } from 'react-router-dom';
+import ConfirmRemoveModal from './ConfirmRemoveModal';
 
 const CartDropdown = ({ className = "" }) => {
   const { cartItems, updateQuantity, removeFromCart, getCartTotal, getItemCount } = useCart();
   const { t } = useLanguage();
+  const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);
+  const [confirmModal, setConfirmModal] = useState({ isOpen: false, productId: null, productTitle: '' });
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -33,10 +30,26 @@ const CartDropdown = ({ className = "" }) => {
 
   const handleQuantityChange = (id, newQuantity) => {
     if (newQuantity <= 0) {
-      removeFromCart(id);
+      const item = cartItems.find(item => item.id === id);
+      setConfirmModal({
+        isOpen: true,
+        productId: id,
+        productTitle: item?.title || 'this item'
+      });
     } else {
       updateQuantity(id, newQuantity);
     }
+  };
+
+  const handleConfirmRemove = () => {
+    if (confirmModal.productId) {
+      removeFromCart(confirmModal.productId);
+    }
+    setConfirmModal({ isOpen: false, productId: null, productTitle: '' });
+  };
+
+  const handleCancelRemove = () => {
+    setConfirmModal({ isOpen: false, productId: null, productTitle: '' });
   };
 
   const handleRemoveItem = (id) => {
@@ -205,6 +218,14 @@ const CartDropdown = ({ className = "" }) => {
           </motion.div>
         )}
       </AnimatePresence>
+      
+      {/* Confirmation Modal */}
+      <ConfirmRemoveModal
+        isOpen={confirmModal.isOpen}
+        onClose={handleCancelRemove}
+        onConfirm={handleConfirmRemove}
+        productTitle={confirmModal.productTitle}
+      />
     </div>
   );
 };

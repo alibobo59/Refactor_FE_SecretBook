@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { useOrder } from "../contexts/OrderContext";
-import { useAuth } from "../contexts/AuthContext";
+import { useOrder } from "../../contexts/OrderContext";
+import { useAuth } from "../../contexts/AuthContext";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Package,
@@ -27,7 +27,7 @@ const OrderManagementPage = () => {
   const { user } = useAuth();
   const { getUserOrders, cancelOrder, loading } = useOrder();
   const navigate = useNavigate();
-  
+
   const [orders, setOrders] = useState([]);
   const [filteredOrders, setFilteredOrders] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
@@ -40,7 +40,7 @@ const OrderManagementPage = () => {
 
   useEffect(() => {
     if (!user) {
-      navigate('/login');
+      navigate("/login");
       return;
     }
 
@@ -59,9 +59,10 @@ const OrderManagementPage = () => {
       filtered = filtered.filter(
         (order) =>
           order.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          order.items?.some(item => 
-            item.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            item.author.toLowerCase().includes(searchTerm.toLowerCase())
+          order.items?.some(
+            (item) =>
+              item.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+              item.author.toLowerCase().includes(searchTerm.toLowerCase())
           )
       );
     }
@@ -106,15 +107,19 @@ const OrderManagementPage = () => {
     setCancellingOrderId(selectedOrder.id);
     try {
       await cancelOrder(selectedOrder.id);
-      
+
       // Update local state
       const updatedOrders = orders.map((order) =>
         order.id === selectedOrder.id
-          ? { ...order, status: 'cancelled', updatedAt: new Date().toISOString() }
+          ? {
+              ...order,
+              status: "cancelled",
+              updatedAt: new Date().toISOString(),
+            }
           : order
       );
       setOrders(updatedOrders);
-      
+
       setIsCancelModalOpen(false);
       setSelectedOrder(null);
     } catch (error) {
@@ -163,7 +168,7 @@ const OrderManagementPage = () => {
   };
 
   const canCancelOrder = (order) => {
-    return order.status === 'pending' || order.status === 'confirmed';
+    return order.status === "pending" || order.status === "confirmed";
   };
 
   const statusOptions = [
@@ -267,7 +272,8 @@ const OrderManagementPage = () => {
             {/* Results Count */}
             <div className="flex items-center justify-center md:justify-end">
               <span className="text-sm text-gray-600 dark:text-gray-400">
-                {filteredOrders.length} order{filteredOrders.length !== 1 ? 's' : ''} found
+                {filteredOrders.length} order
+                {filteredOrders.length !== 1 ? "s" : ""} found
               </span>
             </div>
           </div>
@@ -281,13 +287,14 @@ const OrderManagementPage = () => {
             className="text-center py-12">
             <Package className="h-16 w-16 text-gray-400 mx-auto mb-4" />
             <h2 className="text-xl font-semibold text-gray-800 dark:text-white mb-2">
-              {orders.length === 0 ? "No orders yet" : "No orders match your filters"}
+              {orders.length === 0
+                ? "No orders yet"
+                : "No orders match your filters"}
             </h2>
             <p className="text-gray-600 dark:text-gray-400 mb-6">
-              {orders.length === 0 
+              {orders.length === 0
                 ? "Start shopping to see your orders here"
-                : "Try adjusting your search or filter criteria"
-              }
+                : "Try adjusting your search or filter criteria"}
             </p>
             <Link
               to="/books"
@@ -306,7 +313,6 @@ const OrderManagementPage = () => {
                   exit={{ opacity: 0, y: -20 }}
                   transition={{ delay: index * 0.1 }}
                   className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
-                  
                   {/* Order Header */}
                   <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
                     <div>
@@ -314,16 +320,26 @@ const OrderManagementPage = () => {
                         Order {order.id}
                       </h3>
                       <div className="flex items-center gap-4 mt-1 text-sm text-gray-600 dark:text-gray-400">
-                        <span>Placed on {new Date(order.createdAt).toLocaleDateString()}</span>
+                        <span>
+                          Placed on{" "}
+                          {new Date(order.createdAt).toLocaleDateString()}
+                        </span>
                         <span>•</span>
-                        <span>{order.items?.length || 0} item{(order.items?.length || 0) !== 1 ? 's' : ''}</span>
+                        <span>
+                          {order.items?.length || 0} item
+                          {(order.items?.length || 0) !== 1 ? "s" : ""}
+                        </span>
                       </div>
                     </div>
-                    
+
                     <div className="flex items-center gap-4">
-                      <span className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(order.status)}`}>
+                      <span
+                        className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(
+                          order.status
+                        )}`}>
                         {getStatusIcon(order.status)}
-                        {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
+                        {order.status.charAt(0).toUpperCase() +
+                          order.status.slice(1)}
                       </span>
                       <span className="text-lg font-bold text-gray-800 dark:text-white">
                         ${order.total.toFixed(2)}
@@ -334,7 +350,9 @@ const OrderManagementPage = () => {
                   {/* Order Items Preview */}
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
                     {order.items?.slice(0, 3).map((item) => (
-                      <div key={item.bookId} className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                      <div
+                        key={item.bookId}
+                        className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
                         <img
                           src={item.coverImage}
                           alt={item.title}
@@ -345,7 +363,10 @@ const OrderManagementPage = () => {
                             {item.title}
                           </h4>
                           <p className="text-xs text-gray-600 dark:text-gray-400 truncate">
-                            by {typeof item.author === 'object' ? item.author?.name || 'Unknown Author' : item.author}
+                            by{" "}
+                            {typeof item.author === "object"
+                              ? item.author?.name || "Unknown Author"
+                              : item.author}
                           </p>
                           <div className="flex justify-between items-center mt-1">
                             <span className="text-xs text-gray-500 dark:text-gray-400">
@@ -361,7 +382,8 @@ const OrderManagementPage = () => {
                     {(order.items?.length || 0) > 3 && (
                       <div className="flex items-center justify-center p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
                         <span className="text-sm text-gray-600 dark:text-gray-400">
-                          +{(order.items?.length || 0) - 3} more item{(order.items?.length || 0) - 3 !== 1 ? 's' : ''}
+                          +{(order.items?.length || 0) - 3} more item
+                          {(order.items?.length || 0) - 3 !== 1 ? "s" : ""}
                         </span>
                       </div>
                     )}
@@ -375,7 +397,7 @@ const OrderManagementPage = () => {
                       <Eye className="h-4 w-4" />
                       View Details
                     </button>
-                    
+
                     <Link
                       to={`/order-confirmation/${order.id}`}
                       className="flex items-center gap-2 px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
@@ -392,7 +414,7 @@ const OrderManagementPage = () => {
                       </button>
                     )}
 
-                    {order.status === 'delivered' && (
+                    {order.status === "delivered" && (
                       <Link
                         to={`/books/${order.items?.[0]?.bookId}`}
                         className="flex items-center gap-2 px-4 py-2 border border-green-300 text-green-600 dark:text-green-400 rounded-md hover:bg-green-50 dark:hover:bg-green-900/20 transition-colors">
@@ -420,7 +442,6 @@ const OrderManagementPage = () => {
                 animate={{ scale: 1, opacity: 1 }}
                 exit={{ scale: 0.95, opacity: 0 }}
                 className="bg-white dark:bg-gray-800 rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto">
-                
                 {/* Modal Header */}
                 <div className="flex justify-between items-center p-6 border-b border-gray-200 dark:border-gray-700">
                   <h2 className="text-xl font-semibold text-gray-800 dark:text-white">
@@ -438,20 +459,30 @@ const OrderManagementPage = () => {
                   {/* Order Info */}
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div>
-                      <h3 className="font-medium text-gray-800 dark:text-white mb-2">Order Status</h3>
-                      <span className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(selectedOrder.status)}`}>
+                      <h3 className="font-medium text-gray-800 dark:text-white mb-2">
+                        Order Status
+                      </h3>
+                      <span
+                        className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(
+                          selectedOrder.status
+                        )}`}>
                         {getStatusIcon(selectedOrder.status)}
-                        {selectedOrder.status.charAt(0).toUpperCase() + selectedOrder.status.slice(1)}
+                        {selectedOrder.status.charAt(0).toUpperCase() +
+                          selectedOrder.status.slice(1)}
                       </span>
                     </div>
                     <div>
-                      <h3 className="font-medium text-gray-800 dark:text-white mb-2">Order Date</h3>
+                      <h3 className="font-medium text-gray-800 dark:text-white mb-2">
+                        Order Date
+                      </h3>
                       <p className="text-gray-600 dark:text-gray-400">
                         {new Date(selectedOrder.createdAt).toLocaleDateString()}
                       </p>
                     </div>
                     <div>
-                      <h3 className="font-medium text-gray-800 dark:text-white mb-2">Total Amount</h3>
+                      <h3 className="font-medium text-gray-800 dark:text-white mb-2">
+                        Total Amount
+                      </h3>
                       <p className="text-lg font-semibold text-gray-800 dark:text-white">
                         ${selectedOrder.total.toFixed(2)}
                       </p>
@@ -462,24 +493,30 @@ const OrderManagementPage = () => {
                   <div>
                     <div className="flex items-center gap-3 mb-3">
                       <MapPin className="h-5 w-5 text-amber-600 dark:text-amber-500" />
-                      <h3 className="font-medium text-gray-800 dark:text-white">Shipping Address</h3>
+                      <h3 className="font-medium text-gray-800 dark:text-white">
+                        Shipping Address
+                      </h3>
                     </div>
                     <div className="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
                       <p className="font-medium text-gray-800 dark:text-white">
-                        {selectedOrder.shippingAddress?.firstName} {selectedOrder.shippingAddress?.lastName}
+                        {selectedOrder.shippingAddress?.firstName}{" "}
+                        {selectedOrder.shippingAddress?.lastName}
                       </p>
                       <p className="text-gray-600 dark:text-gray-400">
                         {selectedOrder.shippingAddress?.address}
                       </p>
                       <p className="text-gray-600 dark:text-gray-400">
-                        {selectedOrder.shippingAddress?.city}, {selectedOrder.shippingAddress?.postalCode}
+                        {selectedOrder.shippingAddress?.city},{" "}
+                        {selectedOrder.shippingAddress?.postalCode}
                       </p>
                     </div>
                   </div>
 
                   {/* Contact Information */}
                   <div>
-                    <h3 className="font-medium text-gray-800 dark:text-white mb-3">Contact Information</h3>
+                    <h3 className="font-medium text-gray-800 dark:text-white mb-3">
+                      Contact Information
+                    </h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div className="flex items-center gap-3">
                         <Mail className="h-4 w-4 text-gray-400" />
@@ -498,10 +535,14 @@ const OrderManagementPage = () => {
 
                   {/* Order Items */}
                   <div>
-                    <h3 className="font-medium text-gray-800 dark:text-white mb-3">Order Items</h3>
+                    <h3 className="font-medium text-gray-800 dark:text-white mb-3">
+                      Order Items
+                    </h3>
                     <div className="space-y-3">
                       {selectedOrder.items?.map((item) => (
-                        <div key={item.bookId} className="flex gap-4 p-4 border border-gray-200 dark:border-gray-700 rounded-lg">
+                        <div
+                          key={item.bookId}
+                          className="flex gap-4 p-4 border border-gray-200 dark:border-gray-700 rounded-lg">
                           <img
                             src={item.coverImage}
                             alt={item.title}
@@ -512,7 +553,10 @@ const OrderManagementPage = () => {
                               {item.title}
                             </h4>
                             <p className="text-sm text-gray-600 dark:text-gray-400">
-                              by {typeof item.author === 'object' ? item.author?.name || 'Unknown Author' : item.author}
+                              by{" "}
+                              {typeof item.author === "object"
+                                ? item.author?.name || "Unknown Author"
+                                : item.author}
                             </p>
                             <div className="flex justify-between items-center mt-2">
                               <span className="text-sm text-gray-600 dark:text-gray-400">
@@ -532,7 +576,9 @@ const OrderManagementPage = () => {
                   <div>
                     <div className="flex items-center gap-3 mb-3">
                       <CreditCard className="h-5 w-5 text-amber-600 dark:text-amber-500" />
-                      <h3 className="font-medium text-gray-800 dark:text-white">Payment Method</h3>
+                      <h3 className="font-medium text-gray-800 dark:text-white">
+                        Payment Method
+                      </h3>
                     </div>
                     <div className="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
                       <p className="text-gray-600 dark:text-gray-400">
@@ -544,7 +590,9 @@ const OrderManagementPage = () => {
                   {/* Order Notes */}
                   {selectedOrder.notes && (
                     <div>
-                      <h3 className="font-medium text-gray-800 dark:text-white mb-3">Order Notes</h3>
+                      <h3 className="font-medium text-gray-800 dark:text-white mb-3">
+                        Order Notes
+                      </h3>
                       <div className="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
                         <p className="text-gray-600 dark:text-gray-400">
                           {selectedOrder.notes}
@@ -571,7 +619,6 @@ const OrderManagementPage = () => {
                 animate={{ scale: 1, opacity: 1 }}
                 exit={{ scale: 0.95, opacity: 0 }}
                 className="bg-white dark:bg-gray-800 rounded-lg max-w-md w-full p-6">
-                
                 <div className="flex items-center gap-3 mb-4">
                   <AlertCircle className="h-6 w-6 text-red-500" />
                   <h2 className="text-xl font-semibold text-gray-800 dark:text-white">
@@ -580,8 +627,9 @@ const OrderManagementPage = () => {
                 </div>
 
                 <p className="text-gray-600 dark:text-gray-400 mb-6">
-                  Are you sure you want to cancel order <strong>{selectedOrder.id}</strong>? 
-                  This action cannot be undone.
+                  Are you sure you want to cancel order{" "}
+                  <strong>{selectedOrder.id}</strong>? This action cannot be
+                  undone.
                 </p>
 
                 <div className="flex gap-3">

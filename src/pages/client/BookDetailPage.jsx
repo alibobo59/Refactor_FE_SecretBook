@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
-import { useBook } from "../contexts/BookContext";
-import { useCart } from "../contexts/CartContext";
-import { useAuth } from "../contexts/AuthContext";
-import { useRecommendation } from "../contexts/RecommendationContext";
+import { useBook } from "../../contexts/BookContext";
+import { useCart } from "../../contexts/CartContext";
+import { useAuth } from "../../contexts/AuthContext";
+import { useRecommendation } from "../../contexts/RecommendationContext";
 import {
   Star,
   ShoppingCart,
@@ -15,9 +15,9 @@ import {
   TrendingUp,
 } from "lucide-react";
 import { motion } from "framer-motion";
-import { useLanguage } from "../contexts/LanguageContext";
-import ReviewInteractionButtons from "../components/reviews/ReviewInteractionButtons";
-import SimilarBooks from "../components/recommendations/SimilarBooks";
+import { useLanguage } from "../../contexts/LanguageContext";
+import ReviewInteractionButtons from "../../components/reviews/ReviewInteractionButtons";
+import SimilarBooks from "../../components/recommendations/SimilarBooks";
 
 const BookDetailPage = () => {
   const { id } = useParams();
@@ -95,7 +95,7 @@ const BookDetailPage = () => {
       if (user) {
         trackRating(book.id, rating);
       }
-      
+
       setRating(0);
       setReview("");
       setShowReviewForm(false);
@@ -233,8 +233,8 @@ const BookDetailPage = () => {
       </div>
 
       {/* Similar Books Section */}
-      <SimilarBooks 
-        bookId={parseInt(id)} 
+      <SimilarBooks
+        bookId={parseInt(id)}
         currentBook={book}
         className="bg-gray-50 dark:bg-gray-800 mt-16 -mx-4 px-4"
       />
@@ -330,7 +330,7 @@ const BookDetailPage = () => {
                       className="w-10 h-10 rounded-full bg-gradient-to-r from-amber-500 to-amber-600 flex items-center justify-center text-white font-medium hover:opacity-80 transition-opacity">
                       {rating.user_name.charAt(0)}
                     </Link>
-                    
+
                     <div>
                       <Link
                         to={`/reviewer/${rating.user_id}`}
@@ -354,18 +354,18 @@ const BookDetailPage = () => {
                       </div>
                     </div>
                   </div>
-                  
+
                   <div className="text-right">
                     <span className="text-sm text-gray-500 dark:text-gray-400">
                       {new Date(rating.created_at).toLocaleDateString()}
                     </span>
                   </div>
                 </div>
-                
+
                 <p className="text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
                   {rating.review}
                 </p>
-                
+
                 {/* Like/Dislike Buttons */}
                 <div className="flex items-center justify-between">
                   <ReviewInteractionButtons
@@ -373,7 +373,7 @@ const BookDetailPage = () => {
                     initialLikes={Math.floor(Math.random() * 20) + 5} // Mock initial likes
                     initialDislikes={Math.floor(Math.random() * 5) + 1} // Mock initial dislikes
                   />
-                  
+
                   {/* View Reviewer Profile Link */}
                   <Link
                     to={`/reviewer/${rating.user_id}`}

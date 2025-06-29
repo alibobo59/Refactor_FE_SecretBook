@@ -10,8 +10,8 @@ import {
   Award,
   TrendingUp,
 } from "lucide-react";
-import { useLanguage } from "../contexts/LanguageContext";
-import ReviewInteractionButtons from "../components/reviews/ReviewInteractionButtons";
+import { useLanguage } from "../../contexts/LanguageContext";
+import ReviewInteractionButtons from "../../components/reviews/ReviewInteractionButtons";
 
 const ReviewerProfilePage = () => {
   const { reviewerId } = useParams();
@@ -25,7 +25,7 @@ const ReviewerProfilePage = () => {
     // Simulate API call to fetch reviewer data
     const fetchReviewerData = async () => {
       setLoading(true);
-      
+
       // Mock reviewer data
       const mockReviewer = {
         id: parseInt(reviewerId),
@@ -40,7 +40,11 @@ const ReviewerProfilePage = () => {
         favoriteGenres: ["Fiction", "Mystery", "Romance", "Thriller"],
         badges: [
           { name: "Top Reviewer", icon: Award, color: "text-yellow-500" },
-          { name: "Helpful Reviewer", icon: TrendingUp, color: "text-green-500" },
+          {
+            name: "Helpful Reviewer",
+            icon: TrendingUp,
+            color: "text-green-500",
+          },
         ],
       };
 
@@ -51,9 +55,11 @@ const ReviewerProfilePage = () => {
           bookId: 1,
           bookTitle: "The Great Gatsby",
           bookAuthor: "F. Scott Fitzgerald",
-          bookCover: "https://images.pexels.com/photos/4170629/pexels-photo-4170629.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+          bookCover:
+            "https://images.pexels.com/photos/4170629/pexels-photo-4170629.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
           rating: 5,
-          review: "A timeless classic that never fails to captivate. Fitzgerald's prose is absolutely beautiful, and the story of Jay Gatsby's pursuit of the American Dream is both tragic and compelling. The symbolism throughout the novel is masterful.",
+          review:
+            "A timeless classic that never fails to captivate. Fitzgerald's prose is absolutely beautiful, and the story of Jay Gatsby's pursuit of the American Dream is both tragic and compelling. The symbolism throughout the novel is masterful.",
           date: "2023-07-15",
           helpfulVotes: 23,
           verified: true,
@@ -65,9 +71,11 @@ const ReviewerProfilePage = () => {
           bookId: 2,
           bookTitle: "To Kill a Mockingbird",
           bookAuthor: "Harper Lee",
-          bookCover: "https://images.pexels.com/photos/7034646/pexels-photo-7034646.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+          bookCover:
+            "https://images.pexels.com/photos/7034646/pexels-photo-7034646.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
           rating: 5,
-          review: "An incredibly powerful and important book that everyone should read. Harper Lee's portrayal of racial injustice through the eyes of Scout Finch is both heartbreaking and enlightening. The character development is exceptional.",
+          review:
+            "An incredibly powerful and important book that everyone should read. Harper Lee's portrayal of racial injustice through the eyes of Scout Finch is both heartbreaking and enlightening. The character development is exceptional.",
           date: "2023-07-10",
           helpfulVotes: 31,
           verified: true,
@@ -79,9 +87,11 @@ const ReviewerProfilePage = () => {
           bookId: 6,
           bookTitle: "1984",
           bookAuthor: "George Orwell",
-          bookCover: "https://images.pexels.com/photos/4170629/pexels-photo-4170629.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+          bookCover:
+            "https://images.pexels.com/photos/4170629/pexels-photo-4170629.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
           rating: 4,
-          review: "Orwell's dystopian masterpiece is more relevant today than ever. The concepts of Big Brother, thoughtcrime, and doublethink are chillingly prescient. While the pacing can be slow at times, the overall impact is undeniable.",
+          review:
+            "Orwell's dystopian masterpiece is more relevant today than ever. The concepts of Big Brother, thoughtcrime, and doublethink are chillingly prescient. While the pacing can be slow at times, the overall impact is undeniable.",
           date: "2023-07-05",
           helpfulVotes: 18,
           verified: false,
@@ -93,9 +103,11 @@ const ReviewerProfilePage = () => {
           bookId: 4,
           bookTitle: "Pride and Prejudice",
           bookAuthor: "Jane Austen",
-          bookCover: "https://images.pexels.com/photos/6373305/pexels-photo-6373305.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+          bookCover:
+            "https://images.pexels.com/photos/6373305/pexels-photo-6373305.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
           rating: 4,
-          review: "Austen's wit and social commentary shine through in this delightful romance. Elizabeth Bennet is a wonderful protagonist, and the slow-burn romance with Mr. Darcy is perfectly executed. A true classic of English literature.",
+          review:
+            "Austen's wit and social commentary shine through in this delightful romance. Elizabeth Bennet is a wonderful protagonist, and the slow-burn romance with Mr. Darcy is perfectly executed. A true classic of English literature.",
           date: "2023-06-28",
           helpfulVotes: 15,
           verified: true,
@@ -107,9 +119,11 @@ const ReviewerProfilePage = () => {
           bookId: 3,
           bookTitle: "The Hobbit",
           bookAuthor: "J.R.R. Tolkien",
-          bookCover: "https://images.pexels.com/photos/13660017/pexels-photo-13660017.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+          bookCover:
+            "https://images.pexels.com/photos/13660017/pexels-photo-13660017.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
           rating: 5,
-          review: "The perfect introduction to Middle-earth! Tolkien's world-building is extraordinary, and Bilbo's journey from comfortable hobbit to unlikely hero is beautifully told. The adventure is thrilling and the characters are memorable.",
+          review:
+            "The perfect introduction to Middle-earth! Tolkien's world-building is extraordinary, and Bilbo's journey from comfortable hobbit to unlikely hero is beautifully told. The adventure is thrilling and the characters are memorable.",
           date: "2023-06-20",
           helpfulVotes: 27,
           verified: true,
@@ -237,11 +251,11 @@ const ReviewerProfilePage = () => {
                   })}
                 </div>
               </div>
-              
+
               <p className="text-gray-600 dark:text-gray-400 mb-4">
                 @{reviewer.username}
               </p>
-              
+
               <p className="text-gray-700 dark:text-gray-300 mb-4 max-w-2xl">
                 {reviewer.bio}
               </p>
@@ -291,13 +305,12 @@ const ReviewerProfilePage = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
           className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
-          
           {/* Reviews Header */}
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
             <h2 className="text-2xl font-bold text-gray-800 dark:text-white">
               Reviews ({reviews.length})
             </h2>
-            
+
             {/* Sort Options */}
             <select
               value={sortBy}
@@ -320,7 +333,6 @@ const ReviewerProfilePage = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.1 }}
                 className="border border-gray-200 dark:border-gray-700 rounded-lg p-6">
-                
                 <div className="flex gap-4">
                   {/* Book Cover */}
                   <Link to={`/books/${review.bookId}`} className="shrink-0">
@@ -362,11 +374,11 @@ const ReviewerProfilePage = () => {
                           {review.rating}/5
                         </span>
                       </div>
-                      
+
                       <span className="text-sm text-gray-500 dark:text-gray-400">
                         {new Date(review.date).toLocaleDateString()}
                       </span>
-                      
+
                       {review.verified && (
                         <span className="px-2 py-1 bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 text-xs rounded-full">
                           Verified Purchase

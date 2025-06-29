@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { useCart } from "../contexts/CartContext";
-import { useAuth } from "../contexts/AuthContext";
-import { useOrder } from "../contexts/OrderContext";
-import { useLanguage } from "../contexts/LanguageContext";
+import { useCart } from "../../contexts/CartContext";
+import { useAuth } from "../../contexts/AuthContext";
+import { useOrder } from "../../contexts/OrderContext";
+import { useLanguage } from "../../contexts/LanguageContext";
 import { motion } from "framer-motion";
 import {
   CreditCard,
@@ -27,14 +27,14 @@ const CheckoutPage = () => {
 
   const [checkoutItems, setCheckoutItems] = useState([]);
   const [formData, setFormData] = useState({
-    firstName: user?.name?.split(' ')[0] || '',
-    lastName: user?.name?.split(' ').slice(1).join(' ') || '',
-    email: user?.email || '',
-    phone: '',
-    address: '',
-    city: '',
-    postalCode: '',
-    notes: '',
+    firstName: user?.name?.split(" ")[0] || "",
+    lastName: user?.name?.split(" ").slice(1).join(" ") || "",
+    email: user?.email || "",
+    phone: "",
+    address: "",
+    city: "",
+    postalCode: "",
+    notes: "",
   });
 
   const [errors, setErrors] = useState({});
@@ -42,13 +42,13 @@ const CheckoutPage = () => {
 
   // Load checkout items from sessionStorage or fallback to all cart items
   useEffect(() => {
-    const storedCheckoutItems = sessionStorage.getItem('checkoutItems');
+    const storedCheckoutItems = sessionStorage.getItem("checkoutItems");
     if (storedCheckoutItems) {
       try {
         const items = JSON.parse(storedCheckoutItems);
         setCheckoutItems(items);
       } catch (error) {
-        console.error('Failed to parse checkout items:', error);
+        console.error("Failed to parse checkout items:", error);
         setCheckoutItems(cartItems);
       }
     } else {
@@ -58,16 +58,16 @@ const CheckoutPage = () => {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
-    
+
     // Clear error when user starts typing
     if (errors[name]) {
-      setErrors(prev => ({
+      setErrors((prev) => ({
         ...prev,
-        [name]: ''
+        [name]: "",
       }));
     }
   };
@@ -75,24 +75,26 @@ const CheckoutPage = () => {
   const validateForm = () => {
     const newErrors = {};
 
-    if (!formData.firstName.trim()) newErrors.firstName = 'First name is required';
-    if (!formData.lastName.trim()) newErrors.lastName = 'Last name is required';
-    if (!formData.email.trim()) newErrors.email = 'Email is required';
-    if (!formData.phone.trim()) newErrors.phone = 'Phone number is required';
-    if (!formData.address.trim()) newErrors.address = 'Address is required';
-    if (!formData.city.trim()) newErrors.city = 'City is required';
-    if (!formData.postalCode.trim()) newErrors.postalCode = 'Postal code is required';
+    if (!formData.firstName.trim())
+      newErrors.firstName = "First name is required";
+    if (!formData.lastName.trim()) newErrors.lastName = "Last name is required";
+    if (!formData.email.trim()) newErrors.email = "Email is required";
+    if (!formData.phone.trim()) newErrors.phone = "Phone number is required";
+    if (!formData.address.trim()) newErrors.address = "Address is required";
+    if (!formData.city.trim()) newErrors.city = "City is required";
+    if (!formData.postalCode.trim())
+      newErrors.postalCode = "Postal code is required";
 
     // Email validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (formData.email && !emailRegex.test(formData.email)) {
-      newErrors.email = 'Please enter a valid email address';
+      newErrors.email = "Please enter a valid email address";
     }
 
     // Phone validation (basic)
     const phoneRegex = /^[\+]?[1-9][\d]{0,15}$/;
-    if (formData.phone && !phoneRegex.test(formData.phone.replace(/\s/g, ''))) {
-      newErrors.phone = 'Please enter a valid phone number';
+    if (formData.phone && !phoneRegex.test(formData.phone.replace(/\s/g, ""))) {
+      newErrors.phone = "Please enter a valid phone number";
     }
 
     setErrors(newErrors);
@@ -100,18 +102,21 @@ const CheckoutPage = () => {
   };
 
   const getCheckoutTotal = () => {
-    return checkoutItems.reduce((total, item) => total + (parseFloat(item.price) || 0) * item.quantity, 0);
+    return checkoutItems.reduce(
+      (total, item) => total + (parseFloat(item.price) || 0) * item.quantity,
+      0
+    );
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!validateForm()) {
       return;
     }
 
     if (checkoutItems.length === 0) {
-      alert('No items to checkout');
+      alert("No items to checkout");
       return;
     }
 
@@ -119,7 +124,7 @@ const CheckoutPage = () => {
 
     try {
       const orderData = {
-        items: checkoutItems.map(item => ({
+        items: checkoutItems.map((item) => ({
           bookId: item.id,
           title: item.title,
           author: item.author,
@@ -141,20 +146,20 @@ const CheckoutPage = () => {
         subtotal: getCheckoutTotal(),
         shipping: 0, // Free shipping
         tax: getCheckoutTotal() * 0.1, // 10% tax
-        total: getCheckoutTotal() + (getCheckoutTotal() * 0.1),
+        total: getCheckoutTotal() + getCheckoutTotal() * 0.1,
         notes: formData.notes,
       };
 
       const order = await createOrder(orderData);
-      
+
       // Clear checkout items from sessionStorage
-      sessionStorage.removeItem('checkoutItems');
-      
+      sessionStorage.removeItem("checkoutItems");
+
       // Redirect to order confirmation page
       navigate(`/order-confirmation/${order.id}`);
     } catch (error) {
-      console.error('Failed to create order:', error);
-      alert('Failed to place order. Please try again.');
+      console.error("Failed to create order:", error);
+      alert("Failed to place order. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
@@ -172,7 +177,7 @@ const CheckoutPage = () => {
             Please add some books to your cart before proceeding to checkout.
           </p>
           <button
-            onClick={() => navigate('/cart')}
+            onClick={() => navigate("/cart")}
             className="inline-flex items-center px-6 py-3 bg-amber-600 text-white rounded-md hover:bg-amber-700 transition-colors">
             <ArrowLeft className="h-5 w-5 mr-2" />
             Back to Cart
@@ -189,10 +194,9 @@ const CheckoutPage = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           className="max-w-6xl mx-auto">
-          
           <div className="mb-8">
             <button
-              onClick={() => navigate('/cart')}
+              onClick={() => navigate("/cart")}
               className="inline-flex items-center text-amber-600 dark:text-amber-500 hover:text-amber-700 dark:hover:text-amber-400 mb-4">
               <ArrowLeft className="h-5 w-5 mr-2" />
               Back to Cart
@@ -214,7 +218,7 @@ const CheckoutPage = () => {
                       Contact Information
                     </h2>
                   </div>
-                  
+
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -226,7 +230,9 @@ const CheckoutPage = () => {
                         value={formData.firstName}
                         onChange={handleInputChange}
                         className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500 dark:bg-gray-700 dark:text-white ${
-                          errors.firstName ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
+                          errors.firstName
+                            ? "border-red-500"
+                            : "border-gray-300 dark:border-gray-600"
                         }`}
                         placeholder="Enter your first name"
                       />
@@ -237,7 +243,7 @@ const CheckoutPage = () => {
                         </p>
                       )}
                     </div>
-                    
+
                     <div>
                       <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                         Last Name *
@@ -248,7 +254,9 @@ const CheckoutPage = () => {
                         value={formData.lastName}
                         onChange={handleInputChange}
                         className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500 dark:bg-gray-700 dark:text-white ${
-                          errors.lastName ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
+                          errors.lastName
+                            ? "border-red-500"
+                            : "border-gray-300 dark:border-gray-600"
                         }`}
                         placeholder="Enter your last name"
                       />
@@ -273,7 +281,9 @@ const CheckoutPage = () => {
                           value={formData.email}
                           onChange={handleInputChange}
                           className={`w-full px-3 py-2 pl-10 border rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500 dark:bg-gray-700 dark:text-white ${
-                            errors.email ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
+                            errors.email
+                              ? "border-red-500"
+                              : "border-gray-300 dark:border-gray-600"
                           }`}
                           placeholder="Enter your email"
                         />
@@ -286,7 +296,7 @@ const CheckoutPage = () => {
                         </p>
                       )}
                     </div>
-                    
+
                     <div>
                       <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                         Phone Number *
@@ -298,7 +308,9 @@ const CheckoutPage = () => {
                           value={formData.phone}
                           onChange={handleInputChange}
                           className={`w-full px-3 py-2 pl-10 border rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500 dark:bg-gray-700 dark:text-white ${
-                            errors.phone ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
+                            errors.phone
+                              ? "border-red-500"
+                              : "border-gray-300 dark:border-gray-600"
                           }`}
                           placeholder="Enter your phone number"
                         />
@@ -322,7 +334,7 @@ const CheckoutPage = () => {
                       Shipping Address
                     </h2>
                   </div>
-                  
+
                   <div className="space-y-4">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -334,7 +346,9 @@ const CheckoutPage = () => {
                         value={formData.address}
                         onChange={handleInputChange}
                         className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500 dark:bg-gray-700 dark:text-white ${
-                          errors.address ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
+                          errors.address
+                            ? "border-red-500"
+                            : "border-gray-300 dark:border-gray-600"
                         }`}
                         placeholder="Enter your street address"
                       />
@@ -357,7 +371,9 @@ const CheckoutPage = () => {
                           value={formData.city}
                           onChange={handleInputChange}
                           className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500 dark:bg-gray-700 dark:text-white ${
-                            errors.city ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
+                            errors.city
+                              ? "border-red-500"
+                              : "border-gray-300 dark:border-gray-600"
                           }`}
                           placeholder="Enter your city"
                         />
@@ -368,7 +384,7 @@ const CheckoutPage = () => {
                           </p>
                         )}
                       </div>
-                      
+
                       <div>
                         <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                           Postal Code *
@@ -379,7 +395,9 @@ const CheckoutPage = () => {
                           value={formData.postalCode}
                           onChange={handleInputChange}
                           className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500 dark:bg-gray-700 dark:text-white ${
-                            errors.postalCode ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
+                            errors.postalCode
+                              ? "border-red-500"
+                              : "border-gray-300 dark:border-gray-600"
                           }`}
                           placeholder="Enter postal code"
                         />
@@ -416,7 +434,7 @@ const CheckoutPage = () => {
                       Payment Method
                     </h2>
                   </div>
-                  
+
                   <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
                     <div className="flex items-center gap-3">
                       <input
@@ -428,7 +446,9 @@ const CheckoutPage = () => {
                         readOnly
                         className="text-amber-600 focus:ring-amber-500"
                       />
-                      <label htmlFor="cod" className="flex items-center gap-3 cursor-pointer">
+                      <label
+                        htmlFor="cod"
+                        className="flex items-center gap-3 cursor-pointer">
                         <Truck className="h-5 w-5 text-gray-600 dark:text-gray-400" />
                         <div>
                           <p className="font-medium text-gray-800 dark:text-white">
@@ -451,7 +471,7 @@ const CheckoutPage = () => {
                 <h2 className="text-xl font-semibold text-gray-800 dark:text-white mb-6">
                   Order Summary
                 </h2>
-                
+
                 {/* Cart Items */}
                 <div className="space-y-4 mb-6">
                   {checkoutItems.map((item) => (
@@ -466,7 +486,10 @@ const CheckoutPage = () => {
                           {item.title}
                         </h4>
                         <p className="text-xs text-gray-500 dark:text-gray-400">
-                          by {typeof item.author === 'object' ? item.author?.name || 'Unknown Author' : item.author}
+                          by{" "}
+                          {typeof item.author === "object"
+                            ? item.author?.name || "Unknown Author"
+                            : item.author}
                         </p>
                         <div className="flex justify-between items-center mt-1">
                           <span className="text-sm text-gray-600 dark:text-gray-400">
@@ -498,7 +521,13 @@ const CheckoutPage = () => {
                   <div className="border-t border-gray-200 dark:border-gray-700 pt-3">
                     <div className="flex justify-between text-lg font-semibold text-gray-800 dark:text-white">
                       <span>Total</span>
-                      <span>${(getCheckoutTotal() + getCheckoutTotal() * 0.1).toFixed(2)}</span>
+                      <span>
+                        $
+                        {(
+                          getCheckoutTotal() +
+                          getCheckoutTotal() * 0.1
+                        ).toFixed(2)}
+                      </span>
                     </div>
                   </div>
                 </div>

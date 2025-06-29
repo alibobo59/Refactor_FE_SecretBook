@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
-import { useOrder } from "../contexts/OrderContext";
-import { useAuth } from "../contexts/AuthContext";
+import { useOrder } from "../../contexts/OrderContext";
+import { useAuth } from "../../contexts/AuthContext";
 import { motion } from "framer-motion";
 import {
   CheckCircle,
@@ -29,7 +29,7 @@ const OrderConfirmationPage = () => {
       setOrder(orderData);
     } else {
       // If order not found, redirect to orders page
-      navigate('/profile/orders');
+      navigate("/profile/orders");
     }
   }, [orderId, getOrderById, navigate]);
 
@@ -42,7 +42,8 @@ const OrderConfirmationPage = () => {
             Order Not Found
           </h1>
           <p className="text-gray-600 dark:text-gray-400 mb-6">
-            The order you're looking for doesn't exist or you don't have permission to view it.
+            The order you're looking for doesn't exist or you don't have
+            permission to view it.
           </p>
           <Link
             to="/books"
@@ -56,33 +57,33 @@ const OrderConfirmationPage = () => {
 
   const getStatusColor = (status) => {
     switch (status) {
-      case 'pending':
-        return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200';
-      case 'confirmed':
-        return 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200';
-      case 'processing':
-        return 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200';
-      case 'shipped':
-        return 'bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-200';
-      case 'delivered':
-        return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200';
-      case 'cancelled':
-        return 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200';
+      case "pending":
+        return "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200";
+      case "confirmed":
+        return "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200";
+      case "processing":
+        return "bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200";
+      case "shipped":
+        return "bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-200";
+      case "delivered":
+        return "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200";
+      case "cancelled":
+        return "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200";
       default:
-        return 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300';
+        return "bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300";
     }
   };
 
   const getStatusIcon = (status) => {
     switch (status) {
-      case 'pending':
-      case 'confirmed':
+      case "pending":
+      case "confirmed":
         return <Package className="h-5 w-5" />;
-      case 'processing':
+      case "processing":
         return <Package className="h-5 w-5" />;
-      case 'shipped':
+      case "shipped":
         return <Truck className="h-5 w-5" />;
-      case 'delivered':
+      case "delivered":
         return <CheckCircle className="h-5 w-5" />;
       default:
         return <Package className="h-5 w-5" />;
@@ -96,7 +97,6 @@ const OrderConfirmationPage = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           className="max-w-4xl mx-auto">
-          
           {/* Success Header */}
           <div className="text-center mb-8">
             <motion.div
@@ -110,7 +110,8 @@ const OrderConfirmationPage = () => {
               Order Confirmed!
             </h1>
             <p className="text-gray-600 dark:text-gray-400">
-              Thank you for your order. We'll send you a confirmation email shortly.
+              Thank you for your order. We'll send you a confirmation email
+              shortly.
             </p>
           </div>
 
@@ -130,18 +131,26 @@ const OrderConfirmationPage = () => {
                     </p>
                   </div>
                   <div className="text-right">
-                    <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(order.status)}`}>
+                    <div
+                      className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(
+                        order.status
+                      )}`}>
                       {getStatusIcon(order.status)}
-                      {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
+                      {order.status.charAt(0).toUpperCase() +
+                        order.status.slice(1)}
                     </div>
                   </div>
                 </div>
 
                 {/* Order Items */}
                 <div className="space-y-4">
-                  <h3 className="font-medium text-gray-800 dark:text-white">Order Items</h3>
+                  <h3 className="font-medium text-gray-800 dark:text-white">
+                    Order Items
+                  </h3>
                   {order.items.map((item) => (
-                    <div key={item.bookId} className="flex gap-4 p-4 border border-gray-200 dark:border-gray-700 rounded-lg">
+                    <div
+                      key={item.bookId}
+                      className="flex gap-4 p-4 border border-gray-200 dark:border-gray-700 rounded-lg">
                       <img
                         src={item.coverImage}
                         alt={item.title}
@@ -152,7 +161,10 @@ const OrderConfirmationPage = () => {
                           {item.title}
                         </h4>
                         <p className="text-sm text-gray-600 dark:text-gray-400">
-                          by {typeof item.author === 'object' ? item.author?.name || 'Unknown Author' : item.author}
+                          by{" "}
+                          {typeof item.author === "object"
+                            ? item.author?.name || "Unknown Author"
+                            : item.author}
                         </p>
                         <div className="flex justify-between items-center mt-2">
                           <span className="text-sm text-gray-600 dark:text-gray-400">
@@ -178,11 +190,13 @@ const OrderConfirmationPage = () => {
                 </div>
                 <div className="text-gray-700 dark:text-gray-300">
                   <p className="font-medium">
-                    {order.shippingAddress.firstName} {order.shippingAddress.lastName}
+                    {order.shippingAddress.firstName}{" "}
+                    {order.shippingAddress.lastName}
                   </p>
                   <p>{order.shippingAddress.address}</p>
                   <p>
-                    {order.shippingAddress.city}, {order.shippingAddress.postalCode}
+                    {order.shippingAddress.city},{" "}
+                    {order.shippingAddress.postalCode}
                   </p>
                 </div>
               </div>
@@ -215,7 +229,7 @@ const OrderConfirmationPage = () => {
                 <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-4">
                   Order Summary
                 </h3>
-                
+
                 <div className="space-y-3 mb-6">
                   <div className="flex justify-between text-gray-600 dark:text-gray-400">
                     <span>Subtotal</span>
@@ -269,13 +283,13 @@ const OrderConfirmationPage = () => {
                     <Download className="h-4 w-4" />
                     Download Invoice
                   </button>
-                  
+
                   <Link
                     to="/books"
                     className="w-full flex items-center justify-center gap-2 px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
                     Continue Shopping
                   </Link>
-                  
+
                   <Link
                     to={`/profile/${user?.username}`}
                     className="w-full flex items-center justify-center gap-2 px-4 py-2 text-amber-600 dark:text-amber-500 hover:text-amber-700 dark:hover:text-amber-400 transition-colors">

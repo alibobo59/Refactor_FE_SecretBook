@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { useCart } from "../contexts/CartContext";
-import { useAuth } from "../contexts/AuthContext";
-import { useToast } from "../contexts/ToastContext";
+import { useCart } from "../../contexts/CartContext";
+import { useAuth } from "../../contexts/AuthContext";
+import { useToast } from "../../contexts/ToastContext";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   ShoppingCart,
@@ -22,14 +22,14 @@ const CartPage = () => {
   const { user } = useAuth();
   const toast = useToast();
   const navigate = useNavigate();
-  
+
   const [selectedItems, setSelectedItems] = useState(new Set());
   const [selectAll, setSelectAll] = useState(false);
 
   // Initialize selected items when cart loads
   useEffect(() => {
     if (cartItems.length > 0) {
-      const allItemIds = new Set(cartItems.map(item => item.id));
+      const allItemIds = new Set(cartItems.map((item) => item.id));
       setSelectedItems(allItemIds);
       setSelectAll(true);
     }
@@ -37,12 +37,14 @@ const CartPage = () => {
 
   // Update select all state when individual items change
   useEffect(() => {
-    const allSelected = cartItems.length > 0 && cartItems.every(item => selectedItems.has(item.id));
+    const allSelected =
+      cartItems.length > 0 &&
+      cartItems.every((item) => selectedItems.has(item.id));
     setSelectAll(allSelected);
   }, [selectedItems, cartItems]);
 
   const handleSelectItem = (itemId) => {
-    setSelectedItems(prev => {
+    setSelectedItems((prev) => {
       const newSet = new Set(prev);
       if (newSet.has(itemId)) {
         newSet.delete(itemId);
@@ -57,7 +59,7 @@ const CartPage = () => {
     if (selectAll) {
       setSelectedItems(new Set());
     } else {
-      const allItemIds = new Set(cartItems.map(item => item.id));
+      const allItemIds = new Set(cartItems.map((item) => item.id));
       setSelectedItems(allItemIds);
     }
     setSelectAll(!selectAll);
@@ -73,7 +75,7 @@ const CartPage = () => {
 
   const handleRemoveItem = (itemId) => {
     removeFromCart(itemId);
-    setSelectedItems(prev => {
+    setSelectedItems((prev) => {
       const newSet = new Set(prev);
       newSet.delete(itemId);
       return newSet;
@@ -81,38 +83,41 @@ const CartPage = () => {
   };
 
   const getSelectedItems = () => {
-    return cartItems.filter(item => selectedItems.has(item.id));
+    return cartItems.filter((item) => selectedItems.has(item.id));
   };
 
   const getSelectedTotal = () => {
-    return getSelectedItems().reduce((total, item) => total + (parseFloat(item.price) || 0) * item.quantity, 0);
+    return getSelectedItems().reduce(
+      (total, item) => total + (parseFloat(item.price) || 0) * item.quantity,
+      0
+    );
   };
 
   const handleProceedToCheckout = () => {
     if (selectedItems.size === 0) {
       if (toast) {
         toast.showWarning(
-          'No items selected',
-          'Please select at least one item to proceed to checkout.'
+          "No items selected",
+          "Please select at least one item to proceed to checkout."
         );
       }
       return;
     }
 
     if (!user) {
-      navigate('/login', { state: { from: { pathname: '/checkout' } } });
+      navigate("/login", { state: { from: { pathname: "/checkout" } } });
       return;
     }
 
     // Store selected items in sessionStorage for checkout
     const selectedCartItems = getSelectedItems();
-    sessionStorage.setItem('checkoutItems', JSON.stringify(selectedCartItems));
-    
-    navigate('/checkout');
+    sessionStorage.setItem("checkoutItems", JSON.stringify(selectedCartItems));
+
+    navigate("/checkout");
   };
 
   const handleContinueShopping = () => {
-    navigate('/books');
+    navigate("/books");
   };
 
   if (cartItems.length === 0) {
@@ -123,20 +128,19 @@ const CartPage = () => {
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="max-w-md mx-auto"
-            >
+              className="max-w-md mx-auto">
               <div className="p-8 bg-white dark:bg-gray-800 rounded-xl shadow-lg">
                 <Package className="h-16 w-16 text-gray-400 mx-auto mb-6" />
                 <h1 className="text-2xl font-bold text-gray-800 dark:text-white mb-4">
                   Your cart is empty
                 </h1>
                 <p className="text-gray-600 dark:text-gray-400 mb-8">
-                  Looks like you haven't added any books to your cart yet. Start exploring our collection!
+                  Looks like you haven't added any books to your cart yet. Start
+                  exploring our collection!
                 </p>
                 <button
                   onClick={handleContinueShopping}
-                  className="inline-flex items-center px-6 py-3 bg-amber-600 text-white rounded-md hover:bg-amber-700 transition-colors"
-                >
+                  className="inline-flex items-center px-6 py-3 bg-amber-600 text-white rounded-md hover:bg-amber-700 transition-colors">
                   <ArrowLeft className="h-5 w-5 mr-2" />
                   Continue Shopping
                 </button>
@@ -154,14 +158,12 @@ const CartPage = () => {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="max-w-6xl mx-auto"
-        >
+          className="max-w-6xl mx-auto">
           {/* Header */}
           <div className="mb-8">
             <button
               onClick={handleContinueShopping}
-              className="inline-flex items-center text-amber-600 dark:text-amber-500 hover:text-amber-700 dark:hover:text-amber-400 mb-4 transition-colors"
-            >
+              className="inline-flex items-center text-amber-600 dark:text-amber-500 hover:text-amber-700 dark:hover:text-amber-400 mb-4 transition-colors">
               <ArrowLeft className="h-5 w-5 mr-2" />
               Continue Shopping
             </button>
@@ -172,7 +174,8 @@ const CartPage = () => {
               </h1>
             </div>
             <p className="text-gray-600 dark:text-gray-400">
-              {cartItems.length} item{cartItems.length !== 1 ? 's' : ''} in your cart
+              {cartItems.length} item{cartItems.length !== 1 ? "s" : ""} in your
+              cart
             </p>
           </div>
 
@@ -205,8 +208,7 @@ const CartPage = () => {
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, x: -300 }}
                         transition={{ delay: index * 0.1 }}
-                        className="p-6"
-                      >
+                        className="p-6">
                         <div className="flex gap-4">
                           {/* Checkbox */}
                           <div className="flex items-start pt-2">
@@ -233,12 +235,14 @@ const CartPage = () => {
                               <div className="flex-grow">
                                 <Link
                                   to={`/books/${item.id}`}
-                                  className="text-lg font-semibold text-gray-800 dark:text-white hover:text-amber-600 dark:hover:text-amber-500 transition-colors"
-                                >
+                                  className="text-lg font-semibold text-gray-800 dark:text-white hover:text-amber-600 dark:hover:text-amber-500 transition-colors">
                                   {item.title}
                                 </Link>
                                 <p className="text-gray-600 dark:text-gray-400 mt-1">
-                                  by {typeof item.author === 'object' ? item.author?.name || 'Unknown Author' : item.author}
+                                  by{" "}
+                                  {typeof item.author === "object"
+                                    ? item.author?.name || "Unknown Author"
+                                    : item.author}
                                 </p>
                                 <p className="text-lg font-bold text-gray-800 dark:text-white mt-2">
                                   ${(parseFloat(item.price) || 0).toFixed(2)}
@@ -249,8 +253,7 @@ const CartPage = () => {
                               <button
                                 onClick={() => handleRemoveItem(item.id)}
                                 className="p-2 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-full transition-colors"
-                                title="Remove item"
-                              >
+                                title="Remove item">
                                 <Trash2 className="h-5 w-5" />
                               </button>
                             </div>
@@ -259,19 +262,27 @@ const CartPage = () => {
                             <div className="flex items-center gap-4 mt-4">
                               <div className="flex items-center border border-gray-300 dark:border-gray-600 rounded-md">
                                 <button
-                                  onClick={() => handleQuantityChange(item.id, item.quantity - 1)}
+                                  onClick={() =>
+                                    handleQuantityChange(
+                                      item.id,
+                                      item.quantity - 1
+                                    )
+                                  }
                                   className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-                                  disabled={item.quantity <= 1}
-                                >
+                                  disabled={item.quantity <= 1}>
                                   <Minus className="h-4 w-4" />
                                 </button>
                                 <span className="px-4 py-2 font-medium text-gray-800 dark:text-white min-w-[60px] text-center">
                                   {item.quantity}
                                 </span>
                                 <button
-                                  onClick={() => handleQuantityChange(item.id, item.quantity + 1)}
-                                  className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-                                >
+                                  onClick={() =>
+                                    handleQuantityChange(
+                                      item.id,
+                                      item.quantity + 1
+                                    )
+                                  }
+                                  className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
                                   <Plus className="h-4 w-4" />
                                 </button>
                               </div>
@@ -281,7 +292,11 @@ const CartPage = () => {
                                   Subtotal
                                 </p>
                                 <p className="text-lg font-bold text-gray-800 dark:text-white">
-                                  ${((parseFloat(item.price) || 0) * item.quantity).toFixed(2)}
+                                  $
+                                  {(
+                                    (parseFloat(item.price) || 0) *
+                                    item.quantity
+                                  ).toFixed(2)}
                                 </p>
                               </div>
                             </div>
@@ -353,7 +368,13 @@ const CartPage = () => {
                   <div className="border-t border-gray-200 dark:border-gray-700 pt-3">
                     <div className="flex justify-between text-lg font-semibold text-gray-800 dark:text-white">
                       <span>Total</span>
-                      <span>${(getSelectedTotal() + getSelectedTotal() * 0.1).toFixed(2)}</span>
+                      <span>
+                        $
+                        {(
+                          getSelectedTotal() +
+                          getSelectedTotal() * 0.1
+                        ).toFixed(2)}
+                      </span>
                     </div>
                   </div>
                 </div>
@@ -363,16 +384,14 @@ const CartPage = () => {
                   <button
                     onClick={handleProceedToCheckout}
                     disabled={selectedItems.size === 0}
-                    className="w-full bg-amber-600 text-white py-3 px-4 rounded-md hover:bg-amber-700 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-                  >
+                    className="w-full bg-amber-600 text-white py-3 px-4 rounded-md hover:bg-amber-700 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center justify-center gap-2">
                     <span>Proceed to Checkout</span>
                     <ArrowRight className="h-5 w-5" />
                   </button>
 
                   <button
                     onClick={handleContinueShopping}
-                    className="w-full border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 py-3 px-4 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
-                  >
+                    className="w-full border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 py-3 px-4 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
                     Continue Shopping
                   </button>
                 </div>
